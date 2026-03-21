@@ -6,25 +6,23 @@ function App() {
   const [currentPage, setCurrentPage] = useState('pollution');
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Simple Navigation Bar */}
-      <nav className="bg-white border-b p-4 flex gap-6 shadow-sm">
-        <button 
+    <div className="app">
+      <nav className="nav">
+        <span className="nav-brand">Kolkata Civic Data</span>
+        <button
+          className={`nav-btn${currentPage === 'pollution' ? ' active' : ''}`}
           onClick={() => setCurrentPage('pollution')}
-          className={`font-bold ${currentPage === 'pollution' ? 'text-blue-600' : 'text-gray-500'}`}
         >
           Air Pollution
         </button>
-        <button 
+        <button
+          className={`nav-btn${currentPage === 'heatwave' ? ' active' : ''}`}
           onClick={() => setCurrentPage('heatwave')}
-          className={`font-bold ${currentPage === 'heatwave' ? 'text-orange-600' : 'text-gray-500'}`}
         >
-          Heatwave
+          Heatwave &amp; Parliament
         </button>
       </nav>
-
-      {/* Main Content Area */}
-      <main className="max-w-5xl mx-auto p-8">
+      <main className="main">
         {currentPage === 'pollution' ? <AirPollution /> : <HeatWave />}
       </main>
     </div>
