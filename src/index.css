@@ -1,0 +1,341 @@
+/* ── Reset & base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1a1a1a;
+  background: #f5f5f4;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { cursor: pointer; font-family: inherit; font-size: inherit; }
+select { font-family: inherit; font-size: inherit; }
+a { color: inherit; }
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.app { min-height: 100vh; background: #f5f5f4; }
+
+.nav {
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-brand {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-right: 16px;
+  padding: 16px 0;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  padding: 16px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #737373;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.nav-btn:hover { color: #1a1a1a; }
+.nav-btn.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+/* ── Cards ────────────────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.card-muted {
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+/* ── Stat grid ────────────────────────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.stat-label { font-size: 12px; color: #737373; margin-bottom: 6px; }
+.stat-value { font-size: 26px; font-weight: 700; line-height: 1; }
+.stat-sub   { font-size: 12px; color: #a3a3a3; margin-top: 4px; }
+
+/* ── Typography helpers ───────────────────────────────────────── */
+.page-title   { font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+.page-sub     { font-size: 14px; color: #737373; margin-bottom: 28px; }
+.section-head { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 14px; }
+
+/* ── Pill buttons ─────────────────────────────────────────────── */
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+
+.pill {
+  background: #fff;
+  border: 1px solid #d4d4d4;
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #525252;
+  transition: all 0.12s;
+}
+.pill:hover { border-color: #a3a3a3; color: #1a1a1a; }
+.pill.active { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+
+/* ── Year tabs ────────────────────────────────────────────────── */
+.year-tabs {
+  display: flex;
+  background: #f0f0f0;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+.year-tab {
+  background: none;
+  border: none;
+  padding: 6px 18px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #737373;
+  transition: all 0.12s;
+}
+.year-tab.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+/* ── AQI chips ────────────────────────────────────────────────── */
+.aqi-chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.aqi-good        { background: #dcfce7; color: #166534; }
+.aqi-moderate    { background: #fef9c3; color: #713f12; }
+.aqi-ufs         { background: #ffedd5; color: #7c2d12; }
+.aqi-unhealthy   { background: #fee2e2; color: #7f1d1d; }
+.aqi-very        { background: #f3e8ff; color: #581c87; }
+.aqi-hazardous   { background: #fecaca; color: #450a0a; }
+
+/* ── Month grid ───────────────────────────────────────────────── */
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.month-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.month-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #a3a3a3;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 5px;
+  background: #f0f0f0;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.progress-fill { height: 100%; border-radius: 999px; }
+
+.station-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+  font-size: 11px;
+}
+.station-name { color: #a3a3a3; }
+.station-val  { font-weight: 600; }
+
+/* ── Legend ───────────────────────────────────────────────────── */
+.legend { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #737373; }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.legend-dash { width: 18px; height: 2px; flex-shrink: 0; }
+
+/* ── AQI scale bar ────────────────────────────────────────────── */
+.aqi-scale {
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-top: 8px;
+}
+.aqi-scale-title { font-size: 11px; font-weight: 600; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+.aqi-scale-items { display: flex; flex-wrap: wrap; gap: 6px; }
+.aqi-scale-item  { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+
+/* ── Parliament cards ─────────────────────────────────────────── */
+.q-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  transition: box-shadow 0.15s;
+}
+.q-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+
+.q-card-header { padding: 18px 20px; }
+.q-card-body   { padding: 0 20px 18px 20px; border-top: 1px solid #f0f0f0; background: #fafafa; }
+
+.q-id    { font-size: 11px; color: #a3a3a3; font-weight: 500; }
+.q-subj  { font-size: 15px; font-weight: 600; color: #1a1a1a; margin: 4px 0 8px; line-height: 1.4; }
+.q-meta  { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
+.q-date  { font-size: 12px; color: #737373; }
+.q-member{ font-size: 12px; color: #737373; font-style: italic; }
+
+.q-toggle {
+  background: none;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #525252;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.12s;
+}
+.q-toggle:hover { background: #f5f5f5; border-color: #d4d4d4; }
+
+.q-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #a3a3a3;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 16px 0 6px;
+}
+.q-text { font-size: 13px; color: #525252; line-height: 1.7; }
+
+/* ── Ministry badge ───────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.badge-earth    { background: #dbeafe; color: #1e40af; }
+.badge-fisheries{ background: #dcfce7; color: #166534; }
+.badge-other    { background: #f5f5f5; color: #525252; }
+.badge-unstarred{ background: #f5f5f5; color: #525252; }
+
+/* ── Parliament stats ─────────────────────────────────────────── */
+.ministry-bar { margin-bottom: 12px; }
+.ministry-bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+.ministry-bar-track { height: 6px; background: #f0f0f0; border-radius: 999px; overflow: hidden; }
+.ministry-bar-fill  { height: 100%; background: #3b82f6; border-radius: 999px; }
+
+/* ── Chart area ───────────────────────────────────────────────── */
+.chart-wrap {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 20px 20px 12px;
+  margin-bottom: 20px;
+}
+.chart-title { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 16px; }
+
+/* ── Toolbar ──────────────────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.toolbar-label { font-size: 12px; color: #a3a3a3; font-weight: 500; }
+
+.sort-select {
+  margin-left: auto;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #525252;
+  background: #fff;
+  outline: none;
+}
+.sort-select:focus { border-color: #a3a3a3; }
+
+/* ── Coming soon ──────────────────────────────────────────────── */
+.coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: #fffbeb;
+  border: 1.5px dashed #fcd34d;
+  border-radius: 12px;
+  text-align: center;
+  margin-top: 20px;
+}
+.coming-soon p { font-size: 13px; color: #92400e; margin-top: 8px; }
+
+/* ── Result count ─────────────────────────────────────────────── */
+.result-count { font-size: 12px; color: #a3a3a3; margin-bottom: 14px; }
+
+/* ── Header row ───────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .main { padding: 20px 16px 48px; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .month-grid { grid-template-columns: repeat(2, 1fr); }
+}
