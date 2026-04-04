@@ -1,20 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import {
-  LineChart, Line, BarChart, Bar,
-  XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Cell
+    LineChart, Line, BarChart, Bar,
+    XAxis, YAxis, CartesianGrid, Tooltip,
+    ResponsiveContainer, Cell
 } from 'recharts';
 
 // ── Data ────────────────────────────────────────────────────────
 import data2024 from '../data/aqi/2024.json';
+import data2025 from '../data/aqi/2025.json';
 
-const DATA_BY_YEAR = { '2024': data2024 };
+const DATA_BY_YEAR = { '2024': data2024, '2025': data2025 };
 
 // ── Constants ────────────────────────────────────────────────────
 const STATIONS = [
   'Victoria', 'Fort_William', 'Rabindra_Bharati',
   'Bidhannagar', 'Jadavpur', 'Rabindra_Sarobar', 'Ballygunge'
 ];
+
 const LABELS = {
   Victoria: 'Victoria',
   Fort_William: 'Fort William',
@@ -24,6 +26,7 @@ const LABELS = {
   Rabindra_Sarobar: 'R. Sarobar',
   Ballygunge: 'Ballygunge',
 };
+
 const COLORS = {
   Victoria: '#3b82f6',
   Fort_William: '#f97316',
@@ -33,6 +36,7 @@ const COLORS = {
   Rabindra_Sarobar: '#06b6d4',
   Ballygunge: '#f59e0b',
 };
+
 const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_FULL  = ['January','February','March','April','May','June',
                       'July','August','September','October','November','December'];
@@ -95,7 +99,7 @@ function ChartTooltip({ active, payload, label }) {
 
 // ── Main component ───────────────────────────────────────────────
 const AirPollution = () => {
-  const [activeYear, setActiveYear] = useState('2024');
+  const [activeYear, setActiveYear]       = useState('2024');
   const [activeStation, setActiveStation] = useState('all');
 
   const data = DATA_BY_YEAR[activeYear] || [];
@@ -103,7 +107,7 @@ const AirPollution = () => {
   // Compute monthly aggregates
   const monthlyData = useMemo(() => {
     return MONTHS_FULL.map((month, mi) => {
-      const rows = data.filter(r => r.monthIndex === mi);
+      const rows  = data.filter(r => r.monthIndex === mi);
       const entry = { month, short: MONTHS_SHORT[mi] };
       STATIONS.forEach(s => { entry[s] = mean(rows.map(r => r[s])); });
       const all = STATIONS.flatMap(s => rows.map(r => r[s])).filter(v => v != null);
@@ -113,19 +117,32 @@ const AirPollution = () => {
   }, [data]);
 
   // Year-wide stats
-  const allVals = useMemo(() =>
-    data.flatMap(r => STATIONS.map(s => r[s])).filter(v => v != null),
-    [data]
+  const allVals = useMemo(
+    () => data.flatMap(r => STATIONS.map(s => r[s])).filter(v => v != null), [data]
   );
   const yearAvg = allVals.length ? Math.round(allVals.reduce((a,b)=>a+b,0)/allVals.length) : 0;
   const yearMax = allVals.length ? Math.max(...allVals) : 0;
   const yearMin = allVals.length ? Math.min(...allVals) : 0;
 
+  // Find worst and cleanest single-day details
+  const { worstDay, worstStation, cleanestDay, cleanestStation } = useMemo(() => {
+    let wAqi = 0, wDay = '', wSt = '';
+    let cAqi = 999, cDay = '', cSt = '';
+    for (const row of data) {
+      for (const s of STATIONS) {
+        if (row[s] != null) {
+          if (row[s] > wAqi) { wAqi = row[s]; wDay = row.month + ' ' + row.day; wSt = LABELS[s]; }
+          if (row[s] < cAqi) { cAqi = row[s]; cDay = row.month + ' ' + row.day; cSt = LABELS[s]; }
+        }
+      }
+    }
+    return { worstDay: wDay, worstStation: wSt, cleanestDay: cDay, cleanestStation: cSt };
+  }, [data]);
+
   // Station annual averages for bar chart
-  const stationBars = useMemo(() =>
-    STATIONS.map(s => ({
-      s, label: LABELS[s],
-      avg: mean(data.map(r => r[s]))
+  const stationBars = useMemo(
+    () => STATIONS.map(s => ({
+      s, label: LABELS[s], avg: mean(data.map(r => r[s]))
     })).sort((a,b) => (b.avg||0)-(a.avg||0)),
     [data]
   );
@@ -148,15 +165,13 @@ const AirPollution = () => {
       <div className="page-header">
         <div>
           <h1 className="page-title">Air Pollution — Kolkata {activeYear}</h1>
-          <p className="page-sub">Daily PM2.5 AQI across 7 monitoring stations</p>
+          <p className="page-sub">Daily PM2.5 AQI across 7 monitoring stations · Source: WBPCB</p>
         </div>
         <div className="year-tabs">
           {['2024', '2025'].map(y => (
-            <button
-              key={y}
+            <button key={y}
               className={`year-tab${activeYear === y ? ' active' : ''}`}
-              onClick={() => setActiveYear(y)}
-            >
+              onClick={() => setActiveYear(y)}>
               {y}
             </button>
           ))}
@@ -173,30 +188,26 @@ const AirPollution = () => {
         <div className="stat-card">
           <div className="stat-label">Worst single-day AQI</div>
           <div className="stat-value" style={{color: aqiColor(yearMax)}}>{yearMax}</div>
-          <div className="stat-sub">Oct 31 · R. Bharati</div>
+          <div className="stat-sub">{worstDay} · {worstStation}</div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Cleanest single-day AQI</div>
           <div className="stat-value" style={{color: aqiColor(yearMin)}}>{yearMin}</div>
-          <div className="stat-sub">Aug–Sep monsoon period</div>
+          <div className="stat-sub">{cleanestDay} · {cleanestStation}</div>
         </div>
       </div>
 
       {/* Station filter pills */}
       <div className="pills">
-        <button
-          className={`pill${activeStation === 'all' ? ' active' : ''}`}
-          onClick={() => setActiveStation('all')}
-        >
+        <button className={`pill${activeStation === 'all' ? ' active' : ''}`}
+          onClick={() => setActiveStation('all')}>
           All stations
         </button>
         {STATIONS.map(s => (
-          <button
-            key={s}
+          <button key={s}
             className={`pill${activeStation === s ? ' active' : ''}`}
             style={activeStation === s ? {background: COLORS[s], borderColor: COLORS[s], color:'#fff'} : {}}
-            onClick={() => setActiveStation(s)}
-          >
+            onClick={() => setActiveStation(s)}>
             {LABELS[s]}
           </button>
         ))}
@@ -226,20 +237,13 @@ const AirPollution = () => {
             <YAxis tick={{fontSize:11, fill:'#a3a3a3'}} domain={[0,'auto']}/>
             <Tooltip content={<ChartTooltip/>}/>
             {visibleStations.map(s => (
-              <Line
-                key={s} type="monotone" dataKey={s}
-                stroke={COLORS[s]}
+              <Line key={s} type="monotone" dataKey={s} stroke={COLORS[s]}
                 strokeWidth={activeStation === 'all' ? 1.5 : 2.5}
-                dot={false} activeDot={{r:4}}
-              />
+                dot={false} activeDot={{r:4}} />
             ))}
             {activeStation === 'all' && (
-              <Line
-                type="monotone" dataKey="overall"
-                stroke="#1a1a1a" strokeWidth={2.5}
-                strokeDasharray="5 3" dot={false}
-                name="Overall avg"
-              />
+              <Line type="monotone" dataKey="overall" stroke="#1a1a1a"
+                strokeWidth={2.5} strokeDasharray="5 3" dot={false} name="Overall avg" />
             )}
           </LineChart>
         </ResponsiveContainer>
@@ -253,12 +257,9 @@ const AirPollution = () => {
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/>
             <XAxis dataKey="label" tick={{fontSize:10, fill:'#a3a3a3'}}/>
             <YAxis tick={{fontSize:11, fill:'#a3a3a3'}}/>
-            <Tooltip
-              formatter={(v,_,props) => [
-                `${v} — ${aqiLabel(v)}`,
-                props.payload.label
-              ]}
-            />
+            <Tooltip formatter={(v,_,props) => [
+              `${v} — ${aqiLabel(v)}`, props.payload.label
+            ]} />
             <Bar dataKey="avg" radius={[4,4,0,0]}>
               {stationBars.map(b => (
                 <Cell key={b.s} fill={COLORS[b.s]}/>
@@ -280,13 +281,10 @@ const AirPollution = () => {
               )}
             </div>
             <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{
-                  width: `${Math.min(100, Math.round((m.overall||0)/350*100))}%`,
-                  background: aqiColor(m.overall)
-                }}
-              />
+              <div className="progress-fill" style={{
+                width: `${Math.min(100, Math.round((m.overall||0)/350*100))}%`,
+                background: aqiColor(m.overall)
+              }} />
             </div>
             {visibleStations.map(s => (
               <div key={s} className="station-row">
@@ -300,17 +298,18 @@ const AirPollution = () => {
 
       {/* AQI scale */}
       <div className="aqi-scale">
-        <div className="aqi-scale-title">AQI scale — PM2.5</div>
+        <div className="aqi-scale-title">AQI scale — PM2.5 (India NAQI)</div>
         <div className="aqi-scale-items">
           {[
-            ['≤50', 'Good', 'aqi-good'],
-            ['51–100', 'Moderate', 'aqi-moderate'],
-            ['101–150', 'Unhealthy (sensitive)', 'aqi-ufs'],
-            ['151–200', 'Unhealthy', 'aqi-unhealthy'],
-            ['201–300', 'Very unhealthy', 'aqi-very'],
-            ['301+', 'Hazardous', 'aqi-hazardous'],
+            ['≤50',    'Good',                    'aqi-good'],
+            ['51–100', 'Moderate',                 'aqi-moderate'],
+            ['101–150','Unhealthy (sensitive)',     'aqi-ufs'],
+            ['151–200','Unhealthy',                'aqi-unhealthy'],
+            ['201–300','Very unhealthy',           'aqi-very'],
+            ['301+',   'Hazardous',                'aqi-hazardous'],
           ].map(([range, label, cls]) => (
-            <span key={range} className={`aqi-chip ${cls}`} style={{fontSize:11, padding:'3px 10px'}}>
+            <span key={range} className={`aqi-chip ${cls}`}
+              style={{fontSize:11, padding:'3px 10px'}}>
               {range} {label}
             </span>
           ))}
