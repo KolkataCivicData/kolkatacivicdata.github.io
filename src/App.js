@@ -21,6 +21,12 @@ function App() {
         >
           Heatwave &amp; Parliament
         </button>
+        <a className="nav-btn" href={`${process.env.PUBLIC_URL}/lst/`}>
+          LST Map
+        </a>
+        <a className="nav-btn" href={`${process.env.PUBLIC_URL}/lst/static.html`}>
+          LST Heatmap
+        </a>
       </nav>
       <main className="main">
         {currentPage === 'pollution' ? <AirPollution /> : <HeatWave />}
