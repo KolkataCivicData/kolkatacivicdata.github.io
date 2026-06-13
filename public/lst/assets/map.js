@@ -3,7 +3,7 @@
  */
 
 // >>> PASTE the urlFormat printed by the GEE script here <<<
-const GEE_TILE_URL = "PASTE_GEE_TILE_URL_HERE";
+const GEE_TILE_URL = "https://earthengine.googleapis.com/v1/projects/digital-splicer-464020-e9/maps/0ad1981181681025a896b1cdd60bd61e-75aa06878ac8d7a84ada6390ce96dcc0/tiles/{z}/{x}/{y}";
 
 const PALETTE = ['#040274','#0502a3','#0502ce','#235cb1','#307ef3',
                  '#30c8e2','#3be285','#86e26f','#b5e22e','#d28e00',
