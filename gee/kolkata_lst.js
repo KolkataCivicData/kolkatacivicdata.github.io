@@ -85,3 +85,47 @@ print(lstMean.getThumbURL({
   region: kolkata, dimensions: 1024, format: 'png', min: 24, max: 45,
   palette: vis.palette
 }));
+
+
+// ---------- 9. Export LST grid to Drive (for client-side hover read-out) ----------
+// A regular grid of points sampled from the mean LST, exported as CSV (r,c,lon,lat,lst).
+// 60 x 60 = 3600 points over the AOI (~500 m spacing). Runs server-side via the Tasks tab.
+var GRID_LON0 = 88.20, GRID_LON1 = 88.50, GRID_LAT0 = 22.40, GRID_LAT1 = 22.70;
+var NCOLS = 60, NROWS = 60;
+var dLon = (GRID_LON1 - GRID_LON0) / (NCOLS - 1);
+var dLat = (GRID_LAT1 - GRID_LAT0) / (NROWS - 1);
+
+var gridCols = ee.List.sequence(0, NCOLS - 1);
+var gridRows = ee.List.sequence(0, NROWS - 1);
+
+var gridPts = ee.FeatureCollection(gridRows.map(function(ri) {
+  ri = ee.Number(ri);
+  var lat = ee.Number(GRID_LAT1).subtract(ri.multiply(dLat));   // row 0 = north
+  return gridCols.map(function(ci) {
+    ci = ee.Number(ci);
+    var lon = ee.Number(GRID_LON0).add(ci.multiply(dLon));
+    return ee.Feature(ee.Geometry.Point([lon, lat]), { r: ri, c: ci });
+  });
+}).flatten());
+
+var gridSampled = lstMean.reduceRegions({
+  collection: gridPts,
+  reducer: ee.Reducer.mean(),
+  scale: 100
+}).map(function(f) {
+  var m = ee.Number(f.get('mean'));
+  var lstRounded = ee.Algorithms.If(m, m.multiply(10).round().divide(10), null);
+  var coords = f.geometry().coordinates();
+  return f.set({ lon: coords.get(0), lat: coords.get(1), lst: lstRounded }).setGeometry(null);
+});
+
+Export.table.toDrive({
+  collection: gridSampled,
+  description: 'kolkata_lst_grid',
+  folder: 'kolkata_lst',
+  fileNamePrefix: 'kolkata_lst_grid',
+  fileFormat: 'CSV',
+  selectors: ['r', 'c', 'lon', 'lat', 'lst']
+});
+// After the task finishes, download the CSV from Drive and upload it to
+// public/lst/assets/kolkata_lst_grid.csv so the hover read-out in map.js works.
