@@ -142,3 +142,55 @@ map.on('click', e => {
     .setContent(`LST: ${tempStr}<br>Lat ${e.latlng.lat.toFixed(4)}, Lng ${e.latlng.lng.toFixed(4)}`)
     .openOn(map);
 });
+
+/* ============================================================
+ *  View toggle: Interactive (live tiles) vs Static (image)
+ * ============================================================ */
+const STATIC_BOUNDS = [[22.40, 88.20], [22.70, 88.50]];
+const staticLayer = L.imageOverlay('assets/lst_static.png', STATIC_BOUNDS, {
+    opacity: 0.85,
+    attribution: 'LST: NASA/USGS Landsat 8/9 via Google Earth Engine'
+});
+
+let viewMode = 'interactive';
+
+function applyViewMode(mode) {
+    viewMode = mode;
+    if (mode === 'static') {
+          if (lstLayer && map.hasLayer(lstLayer)) map.removeLayer(lstLayer);
+          if (!map.hasLayer(staticLayer)) staticLayer.addTo(map);
+    } else {
+          if (map.hasLayer(staticLayer)) map.removeLayer(staticLayer);
+          if (lstLayer && !map.hasLayer(lstLayer)) lstLayer.addTo(map);
+    }
+    const op = document.getElementById('op');
+    if (op) op.disabled = (mode === 'static');
+    const bi = document.getElementById('mode-interactive');
+    const bs = document.getElementById('mode-static');
+    if (bi && bs) {
+          bi.style.background = mode === 'interactive' ? '#1a1a2e' : '#fff';
+          bi.style.color = mode === 'interactive' ? '#fff' : '#1a1a2e';
+          bs.style.background = mode === 'static' ? '#1a1a2e' : '#fff';
+          bs.style.color = mode === 'static' ? '#fff' : '#1a1a2e';
+    }
+}
+
+const modeCtrl = L.control({ position: 'topleft' });
+modeCtrl.onAdd = function () {
+    const div = L.DomUtil.create('div', 'panel');
+    div.style.padding = '4px';
+    div.innerHTML =
+          '<button id="mode-interactive" style="font:500 12px system-ui;border:1px solid #ccc;border-right:none;border-radius:6px 0 0 6px;padding:6px 10px;cursor:pointer;">Interactive</button>' +
+          '<button id="mode-static" style="font:500 12px system-ui;border:1px solid #ccc;border-radius:0 6px 6px 0;padding:6px 10px;cursor:pointer;">Static</button>';
+    L.DomEvent.disableClickPropagation(div);
+    return div;
+};
+modeCtrl.addTo(map);
+
+map.whenReady(() => {
+    const bi = document.getElementById('mode-interactive');
+    const bs = document.getElementById('mode-static');
+    if (bi) bi.addEventListener('click', () => applyViewMode('interactive'));
+    if (bs) bs.addEventListener('click', () => applyViewMode('static'));
+    applyViewMode('interactive');
+});
