@@ -10,12 +10,9 @@ function App() {
                 Air Pollution
       </button>
           <a className="nav-btn" href={`${process.env.PUBLIC_URL}/lst/`}>
-          LST Map
+          LST
             </a>
-        <a className="nav-btn" href={`${process.env.PUBLIC_URL}/lst/static.html`}>
-          LST Heatmap
-            </a>
-            </nav>
+        </nav>
       <main className="main">
                     <AirPollution />
             </main>
