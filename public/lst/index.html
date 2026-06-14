@@ -5,35 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kolkata Land Surface Temperature — Apr–Jun 2026</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+ integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
-  :root { --ink:#1a1a2e; --accent:#c61700; }
-  * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:var(--ink); }
-  header { padding:18px 22px; border-bottom:1px solid #e6e6e6; }
-  header h1 { margin:0 0 4px; font-size:1.25rem; }
-  header p { margin:0; color:#555; font-size:.85rem; }
-  #map { height: calc(100vh - 139px); width:100%; }
-  .legend { background:#fff; padding:10px 12px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,.3); font-size:.78rem; line-height:1.4; }
-  .legend i { display:inline-block; width:16px; height:12px; margin-right:6px; vertical-align:middle; }
-  .panel { background:#fff; padding:8px 10px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,.3); font-size:.8rem; }
-  .panel label { display:block; margin-bottom:4px; }
-  .note { background:#fff8e1; border:1px solid #ffe082; padding:6px 9px; border-radius:6px; font-size:.72rem; margin-top:6px; }
+:root { --ink:#1a1a2e; --accent:#c61700; }
+* { box-sizing: border-box; }
+body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:var(--ink); }
+header { padding:18px 22px; border-bottom:1px solid #e6e6e6; }
+header h1 { margin:0 0 4px; font-size:1.25rem; }
+header p { margin:0; color:#555; font-size:.85rem; }
+#map { height: calc(100vh - 139px); width:100%; }
+.legend { background:#fff; padding:10px 12px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,.3); font-size:.78rem; line-height:1.4; }
+.legend i { display:inline-block; width:16px; height:12px; margin-right:6px; vertical-align:middle; }
+.panel { background:#fff; padding:8px 10px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,.3); font-size:.8rem; }
+.panel label { display:block; margin-bottom:4px; }
+.note { background:#fff8e1; border:1px solid #ffe082; padding:6px 9px; border-radius:6px; font-size:.72rem; margin-top:6px; }
+/* Plain-language intro / heat-exposure explainer */
+#lst-explainer { padding:10px 22px; background:#fff7ed; border-bottom:1px solid #fed7aa; }
+#lst-explainer h2 { margin:0 0 4px; font-size:1rem; font-weight:700; color:#7f1d1d; }
+#lst-explainer p { margin:0; font-size:.82rem; line-height:1.5; color:#334155; max-width:780px; }
+/* Keyboard focus visibility for accessibility */
+input:focus-visible, button:focus-visible, select:focus-visible, a:focus-visible { outline:2px solid #2563eb; outline-offset:2px; }
 </style>
 </head>
 <body>
-      <nav style="display:flex;align-items:center;gap:4px;background:#fff;padding:0 24px;border-bottom:1px solid #e5e5e5;font-family:-apple-system,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-            <span style="color:#1a1a1a;font-weight:600;font-size:14px;padding:16px 14px 16px 0;margin-right:8px;">Kolkata Civic Data</span>
-            <a href="/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:#737373;border-bottom:2px solid transparent;">Air Pollution</a>
-            <a href="/lst/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:#1a1a1a;border-bottom:2px solid #1a1a1a;">LST</a>
-            </nav>
+<nav style="display:flex;align-items:center;gap:4px;background:#fff;padding:0 24px;border-bottom:1px solid #e5e5e5;font-family:-apple-system,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<span style="color:#1a1a1a;font-weight:600;font-size:14px;padding:16px 14px 16px 0;margin-right:8px;">Kolkata Civic Data</span>
+<a href="/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:#737373;border-bottom:2px solid transparent;">Air Pollution</a>
+<a href="/lst/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:#1a1a1a;border-bottom:2px solid #1a1a1a;">LST</a>
+</nav>
 <header>
-  <h1>Kolkata Land Surface Temperature</h1>
-  <p>Landsat 8/9 Collection 2 L2 · 1 Apr – 1 Jun 2026 · rendered on OpenStreetMap</p>
+<h1>Kolkata Land Surface Temperature</h1>
+<p>Landsat 8/9 Collection 2 L2 · 1 Apr – 1 Jun 2026 · rendered on OpenStreetMap</p>
 </header>
+<div id="lst-explainer">
+<h2>Heat exposure across Kolkata</h2>
+<p>This map shows how hot different surfaces get across Kolkata during the pre-monsoon season (Apr–Jun). Areas shown in <strong style="color:#7f1d1d;">dark red</strong> experience significantly higher surface temperatures and may pose increased health risks for outdoor workers, while blue areas (water and green cover) stay cooler. Hover anywhere on the map to read the surface temperature; open <em>Charts &amp; tools</em> for stats, trends and comparisons.</p>
+</div>
 <div id="map"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+ integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="assets/map.js"></script>
 </body>
 </html>
