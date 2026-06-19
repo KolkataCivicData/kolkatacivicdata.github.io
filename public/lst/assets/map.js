@@ -31,8 +31,8 @@ const map = L.map('map', {
   zoomControl: true,
   minZoom: 10,            // don't let users zoom out to the whole state
   maxZoom: 18,
-  maxBounds: [[22.30, 88.10], [22.80, 88.60]],   // Kolkata Metropolitan Area
-  maxBoundsViscosity: 0.7
+  maxBounds: STATIC_BOUNDS,   // lock view to the LST heatmap extent
+  maxBoundsViscosity: 1.0
 });
 map.fitBounds(STATIC_BOUNDS);  // open framed on the Kolkata study area
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
