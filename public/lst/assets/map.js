@@ -5,7 +5,7 @@
  * difference map between two dates, UHI transect profile, histogram, stats card,
  * legend ticks, satellite basemap, mobile-friendly cards. */
 
-const GEE_TILE_URL = 'https://earthengine.googleapis.com/v1/projects/digital-splicer-464020-e9/maps/9af263be9ea4abcf5ccec593dbabd490-7d5786e7abecb0c3659459f188513fca/tiles/{z}/{x}/{y}';
+const GEE_TILE_URL = 'assets/tiles/{z}/{x}/{y}.png';
 
 const A = {
   grid:   'assets/kolkata_lst_grid.csv',
