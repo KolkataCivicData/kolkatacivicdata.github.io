@@ -27,7 +27,14 @@ const STATIC_BOUNDS = [[BOUNDS.lat0, BOUNDS.lon0],[BOUNDS.lat1, BOUNDS.lon1]];
 
 
 // ===== Map & basemaps =====
-const map = L.map('map', { zoomControl:true }).setView([22.5726, 88.3639], 11);
+const map = L.map('map', {
+  zoomControl: true,
+  minZoom: 10,            // don't let users zoom out to the whole state
+  maxZoom: 18,
+  maxBounds: [[22.30, 88.10], [22.80, 88.60]],   // Kolkata Metropolitan Area
+  maxBoundsViscosity: 0.7
+});
+map.fitBounds(STATIC_BOUNDS);  // open framed on the Kolkata study area
 const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom:19, attribution:'&copy; OpenStreetMap contributors' }).addTo(map);
 const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
@@ -35,8 +42,15 @@ const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Wo
 
 let lstLayer = null;
 if (GEE_TILE_URL && GEE_TILE_URL.indexOf('PASTE') !== 0) {
-  lstLayer = L.tileLayer(GEE_TILE_URL, { opacity:0.7,
-    attribution:'LST: NASA/USGS Landsat 8/9 C2 L2 via Google Earth Engine' }).addTo(map);
+  lstLayer = L.tileLayer(GEE_TILE_URL, {
+  opacity: 0.7,
+  minZoom: 9,
+  maxNativeZoom: 15,      // deepest real tile; Leaflet upsamples beyond so it never vanishes
+  maxZoom: 18,
+  bounds: STATIC_BOUNDS,  // only request tiles intersecting the Kolkata study area
+  tms: false,
+  attribution: 'LST: NASA/USGS Landsat 8/9 C2 L2 via Google Earth Engine'
+}).addTo(map);
 }
 const ndviLayer = L.imageOverlay(A.ndviPng, STATIC_BOUNDS, { opacity:0.75, attribution:'NDVI: Landsat 8/9 via GEE' });
 const lulcLayer = L.imageOverlay(A.lulcPng, STATIC_BOUNDS, { opacity:0.70, attribution:'Land use: Landsat 8/9 via GEE' });
