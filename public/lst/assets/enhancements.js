@@ -31,14 +31,11 @@
   }
 
   function init(map){
-    // 1) Lock map to West Bengal and limit zoom
-    try {
-      map.setMaxBounds(L.latLngBounds([21.4, 85.7], [27.4, 90.0]));
-      map.options.maxBoundsViscosity = 1.0;
-      map.setMinZoom(9);
+    // 1) Lock map + zoom to the Kolkata LST heatmap extent so it fills the frame
+    try {map.setMaxBounds(L.latLngBounds([22.40, 88.20], [22.70, 88.50]));      map.options.maxBoundsViscosity = 1.0;
+      map.setMinZoom(11);
       map.setMaxZoom(16);
-      if (map.getZoom() < 9) map.setZoom(9);
-    } catch(e){}
+      map.fitBounds(map.options.maxBounds);    } catch(e){}
 
     // 2) Difference-map labels + date select aria-label
     function addLabel(id, text){
