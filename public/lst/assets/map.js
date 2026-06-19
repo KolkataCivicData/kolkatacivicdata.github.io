@@ -29,7 +29,7 @@ const STATIC_BOUNDS = [[BOUNDS.lat0, BOUNDS.lon0],[BOUNDS.lat1, BOUNDS.lon1]];
 // ===== Map & basemaps =====
 const map = L.map('map', {
   zoomControl: true,
-  minZoom: 10,            // don't let users zoom out to the whole state
+  minZoom: 11,            // keep the view tight on the heatmap area
   maxZoom: 18,
   maxBounds: STATIC_BOUNDS,   // lock view to the LST heatmap extent
   maxBoundsViscosity: 1.0
