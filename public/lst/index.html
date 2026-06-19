@@ -14,6 +14,7 @@ header { padding:18px 22px; border-bottom:1px solid #e6e6e6; }
 header h1 { margin:0 0 4px; font-size:1.25rem; }
 header p { margin:0; color:#555; font-size:.85rem; }
 #map { height: calc(100vh - 139px); width:100%; }
+ @media (max-width:760px){ .legend{ font-size:.7rem; padding:6px 8px; max-height:34vh; overflow:auto; } .leaflet-control-layers{ font-size:.75rem; max-width:46vw; } .leaflet-right .leaflet-control{ clear:both; margin-right:6px !important; } .panel{ font-size:.72rem; max-width:46vw; } }
 .legend { background:#fff; padding:10px 12px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,.3); font-size:.78rem; line-height:1.4; }
 .legend i { display:inline-block; width:16px; height:12px; margin-right:6px; vertical-align:middle; }
 .panel { background:#fff; padding:8px 10px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,.3); font-size:.8rem; }
@@ -35,8 +36,7 @@ input:focus-visible, button:focus-visible, select:focus-visible, a:focus-visible
 </nav>
 <header>
 <h1>Kolkata Land Surface Temperature</h1>
-<p>Landsat 8/9 Collection 2 L2 · 1 Apr – 1 Jun 2026 · rendered on OpenStreetMap</p>
-</header>
+    <p>Landsat 8/9 Collection 2 L2 &middot; 1 Apr &ndash; 1 Jun 2026 &middot; switchable OpenStreetMap / satellite basemaps</p></p></header>
 <div id="lst-explainer">
 <h2>Heat exposure across Kolkata</h2>
 <p>This map shows how hot different surfaces get across Kolkata during the pre-monsoon season (Apr–Jun). Areas shown in <strong style="color:#7f1d1d;">dark red</strong> experience significantly higher surface temperatures and may pose increased health risks for outdoor workers, while blue areas (water and green cover) stay cooler. Hover anywhere on the map to read the surface temperature; open <em>Charts &amp; tools</em> for stats, trends and comparisons.</p>
