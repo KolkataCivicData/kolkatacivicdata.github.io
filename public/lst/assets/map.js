@@ -48,6 +48,17 @@ if (lstLayer) overlays['LST (live tiles)'] = lstLayer;
 overlays['NDVI (vegetation)'] = ndviLayer;
 overlays['Land use'] = lulcLayer;
 overlays['Water bodies'] = waterLayer;
+
+// ===== Always-on-top place labels (keep geographic context over overlays) =====
+map.createPane('labels');
+map.getPane('labels').style.zIndex = 650;           // above data overlays, below popups
+map.getPane('labels').style.pointerEvents = 'none'; // let clicks pass through to the map
+const labelsLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+  pane: 'labels', subdomains: 'abcd', maxZoom: 20,
+  attribution: 'Labels &copy; CARTO &copy; OpenStreetMap contributors'
+}).addTo(map);
+overlays['Place labels'] = labelsLayer;
+
 L.control.layers(baseMaps, overlays, { position:'topright', collapsed:false }).addTo(map);
 
 
