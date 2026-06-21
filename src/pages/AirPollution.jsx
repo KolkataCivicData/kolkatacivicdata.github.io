@@ -82,14 +82,15 @@ function ChartTooltip({ active, payload, label }) {
   if (!active || !payload || !payload.length) return null;
   return (
     <div style={{
-      background:'#fff', border:'1px solid #e5e5e5', borderRadius:8,
-      padding:'10px 14px', fontSize:12, boxShadow:'0 4px 12px rgba(0,0,0,0.1)'
+      background:'rgba(20,6,7,0.92)', border:'1px solid rgba(255,110,105,0.34)', borderRadius:10,
+      padding:'10px 14px', fontSize:12, boxShadow:'0 10px 30px rgba(0,0,0,0.5)',
+      backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)'
     }}>
-      <div style={{fontWeight:600, marginBottom:6, color:'#1a1a1a'}}>{label}</div>
+      <div style={{fontWeight:600, marginBottom:6, color:'#fff'}}>{label}</div>
       {payload.map(p => (
         <div key={p.dataKey} style={{display:'flex', alignItems:'center', gap:8, padding:'2px 0'}}>
           <span style={{width:10, height:10, borderRadius:3, background:p.color, flexShrink:0}}/>
-          <span style={{color:'#737373'}}>{LABELS[p.dataKey] || p.dataKey}:</span>
+          <span style={{color:'rgba(245,220,218,0.66)'}}>{LABELS[p.dataKey] || p.dataKey}:</span>
           <span style={{fontWeight:600, color: aqiColor(p.value)}}>{p.value ?? '—'}</span>
         </div>
       ))}
@@ -225,16 +226,16 @@ const AirPollution = () => {
           ))}
           {activeStation === 'all' && (
             <div className="legend-item">
-              <div className="legend-dash" style={{background:'#1a1a1a'}}/>
+              <div className="legend-dash" style={{background:'#f5e9e8'}}/>
               Overall avg
             </div>
           )}
         </div>
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={monthlyData} margin={{top:4, right:8, left:-20, bottom:4}}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/>
-            <XAxis dataKey="short" tick={{fontSize:11, fill:'#a3a3a3'}}/>
-            <YAxis tick={{fontSize:11, fill:'#a3a3a3'}} domain={[0,'auto']}/>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)"/>
+            <XAxis dataKey="short" tick={{fontSize:11, fill:'rgba(245,210,208,0.5)'}}/>
+            <YAxis tick={{fontSize:11, fill:'rgba(245,210,208,0.5)'}} domain={[0,'auto']}/>
             <Tooltip content={<ChartTooltip/>}/>
             {visibleStations.map(s => (
               <Line key={s} type="monotone" dataKey={s} stroke={COLORS[s]}
@@ -242,7 +243,7 @@ const AirPollution = () => {
                 dot={false} activeDot={{r:4}} />
             ))}
             {activeStation === 'all' && (
-              <Line type="monotone" dataKey="overall" stroke="#1a1a1a"
+              <Line type="monotone" dataKey="overall" stroke="#f5e9e8"
                 strokeWidth={2.5} strokeDasharray="5 3" dot={false} name="Overall avg" />
             )}
           </LineChart>
@@ -254,9 +255,9 @@ const AirPollution = () => {
         <div className="chart-title">Annual average AQI by station</div>
         <ResponsiveContainer width="100%" height={190}>
           <BarChart data={stationBars} margin={{top:4, right:8, left:-20, bottom:4}}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/>
-            <XAxis dataKey="label" tick={{fontSize:10, fill:'#a3a3a3'}}/>
-            <YAxis tick={{fontSize:11, fill:'#a3a3a3'}}/>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.07)"/>
+            <XAxis dataKey="label" tick={{fontSize:10, fill:'rgba(245,210,208,0.5)'}}/>
+            <YAxis tick={{fontSize:11, fill:'rgba(245,210,208,0.5)'}}/>
             <Tooltip formatter={(v,_,props) => [
               `${v} — ${aqiLabel(v)}`, props.payload.label
             ]} />

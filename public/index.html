@@ -3,12 +3,74 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#0a0203" />
     <meta name="description" content="What does government data tell us about Kolkata?" />
     <title>Kolkata Civic Data</title>
+    <style>
+      html, body { background: #060102; }
+      /* Fixed parallax depth field, sits behind the React app */
+      #bg-field {
+        position: fixed;
+        inset: -8%;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+        background: radial-gradient(circle at 28% 12%, #2a0608 0%, #120203 46%, #060102 100%);
+      }
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(40px);
+        will-change: transform;
+      }
+      .orb-1 { top: -6%;  left: -4%;  width: 42vw; height: 42vw; background: radial-gradient(circle, rgba(229,75,74,0.42), transparent 66%); }
+      .orb-2 { bottom: -12%; right: -8%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(163,45,45,0.4), transparent 66%); }
+      .orb-3 { top: 42%; left: 54%; width: 22vw; height: 22vw; background: radial-gradient(circle, rgba(255,90,80,0.3), transparent 62%); }
+      .grain {
+        position: absolute; inset: 0;
+        background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+        background-size: 3px 3px;
+        opacity: 0.5;
+      }
+      #root { position: relative; z-index: 1; }
+      @media (prefers-reduced-motion: reduce) {
+        .orb { transform: none !important; }
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="bg-field">
+      <div class="orb orb-1" data-depth="14"></div>
+      <div class="orb orb-2" data-depth="22"></div>
+      <div class="orb orb-3" data-depth="9"></div>
+      <div class="grain"></div>
+    </div>
     <div id="root"></div>
+    <script>
+      (function () {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var orbs = [].slice.call(document.querySelectorAll('#bg-field .orb'));
+        var tx = 0, ty = 0, cx = 0, cy = 0, raf;
+        window.addEventListener('mousemove', function (e) {
+          tx = (e.clientX / window.innerWidth) - 0.5;
+          ty = (e.clientY / window.innerHeight) - 0.5;
+          if (!raf) raf = requestAnimationFrame(loop);
+        }, { passive: true });
+        function loop() {
+          cx += (tx - cx) * 0.06;
+          cy += (ty - cy) * 0.06;
+          orbs.forEach(function (o) {
+            var d = parseFloat(o.getAttribute('data-depth')) || 10;
+            o.style.transform = 'translate(' + (-cx * d) + 'px,' + (-cy * d) + 'px)';
+          });
+          if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) {
+            raf = requestAnimationFrame(loop);
+          } else {
+            raf = null;
+          }
+        }
+      })();
+    </script>
   </body>
 </html>
