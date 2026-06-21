@@ -43,7 +43,7 @@
       if (!el || document.getElementById(id+'-lbl')) return;
       var l = document.createElement('label');
       l.id = id+'-lbl'; l.htmlFor = id; l.textContent = text;
-      l.style.cssText = 'display:block;font-size:11px;font-weight:600;color:#475569;margin-bottom:2px;';
+      l.style.cssText = 'display:block;font-size:11px;font-weight:600;color:rgba(245,220,218,0.7);margin-bottom:2px;';
       el.parentNode.insertBefore(l, el);
       el.setAttribute('aria-label', text);
     }
@@ -70,7 +70,7 @@
           if (!active){
             swatches.forEach(function(s){ if (s !== sw) s.style.opacity = '0.3'; });
             sw.dataset.active = '1';
-            sw.style.boxShadow = '0 0 0 2px #1e293b';
+            sw.style.boxShadow = '0 0 0 2px #ff8a85';
           }
         }
         sw.addEventListener('click', toggle);
@@ -87,7 +87,7 @@
       var obs = new MutationObserver(function(){
         if (/outside area/.test(readoutEl.textContent) && !readoutEl.dataset.fixed){
           readoutEl.dataset.fixed = '1';
-          readoutEl.innerHTML = '<span style="color:#64748b">No reading here - move over the colored area</span>';
+          readoutEl.innerHTML = '<span style="color:rgba(245,210,208,0.6)">No reading here - move over the colored area</span>';
           setTimeout(function(){ readoutEl.dataset.fixed = ''; }, 50);
         }
       });

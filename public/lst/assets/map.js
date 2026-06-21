@@ -160,21 +160,22 @@ function loadStats(text){
 const css=document.createElement('style');
 css.textContent = [
   '#map { height: calc(100vh - 139px); }',
-  '.side{position:absolute;top:0;right:0;width:330px;max-width:88vw;height:100%;background:#fff;box-shadow:-2px 0 10px rgba(0,0,0,.15);z-index:1200;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease;padding:14px 14px 50px;}',
+  '.side{position:absolute;top:0;right:0;width:330px;max-width:88vw;height:100%;background:rgba(16,5,6,0.82);backdrop-filter:blur(22px) saturate(135%);-webkit-backdrop-filter:blur(22px) saturate(135%);color:#f5e9e8;box-shadow:-2px 0 24px rgba(0,0,0,.55);border-left:1px solid rgba(255,100,100,0.2);z-index:1200;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease;padding:14px 14px 50px;}',
   '.side.open{transform:translateX(0);}',
-  '.side h3{margin:6px 0 2px;font-size:.95rem;}',
-  '.side .muted{color:#777;font-size:.72rem;}',
-  '.side .card{border:1px solid #eee;border-radius:8px;padding:10px;margin:10px 0;}',
-  '.side .big{font-size:1.4rem;font-weight:700;}',
-  '.side-toggle{position:absolute;top:10px;right:10px;z-index:1300;background:#1a1a2e;color:#fff;border:none;border-radius:6px;padding:8px 12px;font:600 12px system-ui;cursor:pointer;}',
-  '.side-close{float:right;border:none;background:#f0f0f0;border-radius:6px;cursor:pointer;padding:4px 8px;}',
+  '.side h3{margin:6px 0 2px;font-size:.95rem;color:#fff;}',
+  '.side .muted{color:rgba(245,210,208,0.5);font-size:.72rem;}',
+  '.side .card{border:1px solid rgba(255,100,100,0.18);background:rgba(40,12,13,0.35);border-radius:10px;padding:10px;margin:10px 0;}',
+  '.side .big{font-size:1.4rem;font-weight:700;color:#fff;}',
+  '.side-toggle{position:absolute;top:10px;right:10px;z-index:1300;background:linear-gradient(135deg,#e54b4a,#a32d2d);color:#fff;border:none;border-radius:7px;padding:8px 12px;font:600 12px system-ui;cursor:pointer;box-shadow:0 6px 20px rgba(229,75,74,0.4);}',
+  '.side-close{float:right;border:1px solid rgba(255,100,100,0.2);background:rgba(255,255,255,0.05);color:#f5e9e8;border-radius:6px;cursor:pointer;padding:4px 8px;}',
   '.tool-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0;}',
-  '.tool-row select,.tool-row button{font:500 12px system-ui;padding:5px 8px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;}',
-  '.swatch{display:inline-block;width:12px;height:12px;border:1px solid #0003;vertical-align:middle;margin-right:4px;}',
+  '.tool-row select,.tool-row button{font:500 12px system-ui;padding:5px 8px;border:1px solid rgba(255,100,100,0.22);border-radius:6px;background:rgba(20,6,7,0.8);color:#f5e9e8;cursor:pointer;}',
+  '.tool-row select option{background:#160506;color:#f5e9e8;}',
+  '.swatch{display:inline-block;width:12px;height:12px;border:1px solid rgba(255,255,255,0.25);vertical-align:middle;margin-right:4px;}',
   'canvas.chart{width:100%;height:130px;display:block;}',
-  '.legend{background:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.3);font-size:.78rem;line-height:1.35;}',
-  '.legend i{display:inline-block;width:16px;height:12px;margin-right:6px;vertical-align:middle;}',
-  '.panel{background:#fff;padding:8px 10px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.3);font-size:.8rem;}',
+  '.legend{background:rgba(16,5,6,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#f5e9e8;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,100,100,0.2);box-shadow:0 10px 30px rgba(0,0,0,.5);font-size:.78rem;line-height:1.35;}',
+  '.legend i{display:inline-block;width:16px;height:12px;margin-right:6px;vertical-align:middle;border-radius:2px;}',
+  '.panel{background:rgba(16,5,6,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:#f5e9e8;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,100,100,0.2);box-shadow:0 10px 30px rgba(0,0,0,.5);font-size:.8rem;}',
   '@media (max-width:640px){ .side{width:100%;max-width:100%;} .leaflet-popup-content{font-size:13px;} .leaflet-control-layers{font-size:12px;} }'
 ].join('\n');
 document.head.appendChild(css);
@@ -214,7 +215,7 @@ legend.onAdd = function(){
     const lo=(LST_MIN+i*step).toFixed(0), hi=(LST_MIN+(i+1)*step).toFixed(0);
     html+='<i style="background:'+PALETTE[i]+'"></i>'+lo+'-'+hi+'<br>';
   }
-  if(!lstLayer) html+='<div style="font-size:.7rem;color:#777">Live LST tiles unavailable; using grid.</div>';
+  if(!lstLayer) html+='<div style="font-size:.7rem;color:#9aa4b2">Live LST tiles unavailable; using grid.</div>';
   div.innerHTML=html; return div;
 };
 legend.addTo(map);
@@ -334,11 +335,11 @@ map.on('click', function(e){
   const d=currentDate();
   let html='<div style="min-width:170px">';
   html+='<div style="font-weight:700;font-size:14px"><span class="swatch" style="background:'+colourFor(t)+'"></span>'+(t==null||isNaN(t)?'no data':t.toFixed(1)+' C')+'</div>';
-  html+='<div class="muted" style="color:#777;font-size:11px">'+(d?('Date: '+d):'Mean composite (Apr-Jun 2026)')+'</div>';
+  html+='<div class="muted" style="color:#9aa4b2;font-size:11px">'+(d?('Date: '+d):'Mean composite (Apr-Jun 2026)')+'</div>';
   html+='<div style="font-size:12px;margin-top:4px">NDVI: '+(nd==null||isNaN(nd)?'-':nd.toFixed(2))+'</div>';
   html+='<div style="font-size:12px">Land use: <span class="'+luCls+'">'+luName+'</span></div>';
-  html+='<div class="muted" style="color:#777;font-size:11px;margin-top:4px">'+e.latlng.lat.toFixed(4)+', '+e.latlng.lng.toFixed(4)+'</div>';
-  if (DATES.length){ html+='<canvas id="popTs" width="190" height="70" style="width:190px;height:70px;margin-top:6px"></canvas>'; html+='<div class="muted" style="color:#777;font-size:10px">LST across '+DATES.length+' dates</div>'; }
+  html+='<div class="muted" style="color:#9aa4b2;font-size:11px;margin-top:4px">'+e.latlng.lat.toFixed(4)+', '+e.latlng.lng.toFixed(4)+'</div>';
+  if (DATES.length){ html+='<canvas id="popTs" width="190" height="70" style="width:190px;height:70px;margin-top:6px"></canvas>'; html+='<div class="muted" style="color:#9aa4b2;font-size:10px">LST across '+DATES.length+' dates</div>'; }
   html+='</div>';
   L.popup({maxWidth:230}).setLatLng(e.latlng).setContent(html).openOn(map);
   if (DATES.length){ setTimeout(function(){ const cv=document.getElementById('popTs'); if(cv) drawLine(cv, DATES, pixelSeries(r,c)); },30); }
