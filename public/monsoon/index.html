@@ -52,6 +52,9 @@ body > *:not(#bg-field) { position:relative; z-index:1; }
 .kw-data { display:flex; flex-direction:column; gap:var(--cds-gap-sm); }
 .kw-data ul { margin:0; padding-left:1.2rem; display:flex; flex-direction:column; gap:4px; color:var(--color-fg-muted); }
 .kw-data a { color:#ff8a85; }
+.kw-byline { margin:0; font-size:13px; color:var(--color-fg-muted); letter-spacing:.02em; }
+.kw-footer { margin-top:var(--cds-gap-xl); padding-top:var(--cds-pad-lg); border-top:1px solid var(--color-border-line); font-size:13px; color:var(--color-fg-muted); }
+.kw-footer strong { color:var(--ink); font-weight:600; }
 .dash-skeleton { position:relative; color:transparent !important; }
 .dash-skeleton::after { content:""; position:absolute; inset:0; border-radius:6px; background:rgba(255,255,255,0.06); }
 a:focus-visible, summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
@@ -197,6 +200,7 @@ a:focus-visible, summary:focus-visible { outline:2px solid var(--accent); outlin
     <p class="kw-eyebrow">Weather Union · <span data-draw="station-count" data-source="kpis" data-field="station_count" data-row="0">—</span> stations across Kolkata · 9 May to 8 Nov 2026 · times in IST</p>
     <h1 class="kw-title">Kolkata Monsoon Weather 2026</h1>
     <p class="kw-lede" data-read lang="en">A typical station recorded <b data-draw="lede-total" data-source="kpis" data-field="median_total_mm" data-row="0">—</b> mm of rain over these six months, and <b data-draw="lede-share" data-source="kpis" data-field="jjas_share_pct" data-row="0">—</b>% of it fell between June and September. <b data-draw="lede-month" data-source="kpis" data-field="wettest_months" data-row="0">—</b> brought the most rain.</p>
+    <p class="kw-byline">Developed by SAFAR Foundation, Kolkata</p>
   </header>
 
   <section class="kw-tiles" id="kpis" aria-label="Season summary">
@@ -1135,6 +1139,7 @@ dash.draw('onset', (el) => {
 });
 </script>
 
+  <footer class="kw-footer">Developed by <strong>SAFAR Foundation, Kolkata</strong> · Data: Weather Union station readings, 9 May to 8 Nov 2026</footer>
 </main>
 <script>
 (function () {
