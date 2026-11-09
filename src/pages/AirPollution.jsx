@@ -100,7 +100,7 @@ function ChartTooltip({ active, payload, label }) {
 
 // ── Main component ───────────────────────────────────────────────
 const AirPollution = () => {
-  const [activeYear, setActiveYear]       = useState('2024');
+  const [activeYear, setActiveYear]       = useState('2025');
   const [activeStation, setActiveStation] = useState('all');
 
   const data = DATA_BY_YEAR[activeYear] || [];
@@ -169,7 +169,7 @@ const AirPollution = () => {
           <p className="page-sub">Daily PM2.5 AQI across 7 monitoring stations · Source: WBPCB</p>
         </div>
         <div className="year-tabs">
-          {['2024', '2025'].map(y => (
+          {['2025', '2024'].map(y => (
             <button key={y}
               className={`year-tab${activeYear === y ? ' active' : ''}`}
               onClick={() => setActiveYear(y)}>
