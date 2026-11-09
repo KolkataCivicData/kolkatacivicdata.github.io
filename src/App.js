@@ -12,6 +12,9 @@ function App() {
           <a className="nav-btn" href={`${process.env.PUBLIC_URL}/lst/`}>
           LST
             </a>
+          <a className="nav-btn" href={`${process.env.PUBLIC_URL}/monsoon/`}>
+          Monsoon
+            </a>
         </nav>
       <main className="main">
                     <AirPollution />

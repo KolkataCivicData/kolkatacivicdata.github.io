@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#0a0203" />
+<meta name="description" content="Rain, temperature and humidity from Weather Union stations across Kolkata, 9 May to 8 Nov 2026." />
+<title>Kolkata Monsoon Weather 2026 — Kolkata Civic Data</title>
+<style>
+:root {
+  --ink:#f5e9e8; --accent:#e54b4a;
+  --glass:rgba(28,8,9,0.5); --glass-line:rgba(255,100,100,0.2);
+  --blur:blur(20px) saturate(135%);
+  --color-fg:#f5e9e8; --color-fg-muted:rgba(245,220,218,0.66); --color-bg:#0a0203;
+  --color-panel:rgba(28,8,9,0.55); --color-border-line:rgba(255,100,100,0.2);
+  --color-ok:#5fc88f; --color-warn:#f2b84b; --color-bad:#e54b4a;
+  --font-anthropic-sans:-apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-anthropic-serif:-apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --cds-font-size-caption:12px; --cds-font-size-body:14px; --cds-font-size-heading:17px; --cds-font-size-title:20px;
+  --cds-font-weight-medium:600;
+  --cds-gap-xs:4px; --cds-gap-sm:8px; --cds-gap-md:12px; --cds-gap-lg:20px; --cds-gap-xl:36px;
+  --cds-pad-xs:4px; --cds-pad-sm:8px; --cds-pad-md:12px; --cds-pad-lg:16px; --cds-pad-xl:24px;
+  --cds-radius:10px;
+  --cds-chart-muted:rgba(245,220,218,0.22); --cds-chart-grid:rgba(255,255,255,0.07);
+  --cds-chart-axis:rgba(255,255,255,0.2); --cds-chart-reference:rgba(255,255,255,0.4);
+  --cds-text-secondary:rgba(245,215,212,0.62);
+  --cds-surface-popover:rgba(20,6,7,0.96); --cds-border:rgba(255,110,105,0.36); --cds-shadow-popover:0 10px 30px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background:#060102; }
+body { margin:0; font-family:var(--font-anthropic-sans); color:var(--ink); font-size:14px; }
+#bg-field { position:fixed; inset:-8%; z-index:0; overflow:hidden; pointer-events:none;
+  background:radial-gradient(circle at 28% 10%, #2a0608 0%, #120203 46%, #060102 100%); }
+#bg-field .orb { position:absolute; border-radius:50%; filter:blur(44px); will-change:transform; }
+#bg-field .orb-1 { top:-10%; left:-6%; width:46vw; height:46vw; background:radial-gradient(circle,rgba(229,75,74,0.4),transparent 66%); }
+#bg-field .orb-2 { bottom:-14%; right:-8%; width:42vw; height:42vw; background:radial-gradient(circle,rgba(163,45,45,0.38),transparent 66%); }
+body > *:not(#bg-field) { position:relative; z-index:1; }
+.site-nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; background:rgba(12,3,4,0.6); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); padding:0 24px; border-bottom:1px solid var(--glass-line); }
+.site-nav .brand { color:#fff; font-weight:700; font-size:14px; padding:16px 14px 16px 0; margin-right:8px; letter-spacing:.2px; }
+.site-nav a { font-size:14px; font-weight:500; padding:16px 14px; text-decoration:none; color:rgba(245,220,218,0.66); border-bottom:2px solid transparent; }
+.site-nav a:hover { color:var(--ink); }
+.site-nav a.active { color:#fff; border-bottom-color:var(--accent); }
+.page { max-width:1040px; margin:0 auto; padding-block:32px 64px; padding-left:max(20px, env(safe-area-inset-left, 0px)); padding-right:max(20px, env(safe-area-inset-right, 0px)); }
+.kw .kw-title { font-weight:700; color:#fff; }
+.kw .kw-tile { backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+.kw .kw-tile-value { font-weight:700; color:#fff; }
+.kw-sec h2 { color:#fff; }
+.kw-lede b { color:#ff8a85; }
+.kw-note b { color:#ff8a85; }
+.kw-tablewrap { background:rgba(20,6,7,0.45); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+.kw-data { display:flex; flex-direction:column; gap:var(--cds-gap-sm); }
+.kw-data ul { margin:0; padding-left:1.2rem; display:flex; flex-direction:column; gap:4px; color:var(--color-fg-muted); }
+.kw-data a { color:#ff8a85; }
+.dash-skeleton { position:relative; color:transparent !important; }
+.dash-skeleton::after { content:""; position:absolute; inset:0; border-radius:6px; background:rgba(255,255,255,0.06); }
+a:focus-visible, summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+/* Minimal runtime: loads the CSV files next to this page, runs the calculations and draws each chart. */
+(function () {
+  const files = {
+    daily: 'daily_network.csv', stations: 'stations.csv', monthly_station: 'monthly_station.csv',
+    rain_hours: 'rain_by_hour.csv', temp_hours: 'temp_by_hour.csv', station_days: 'station_days.csv', rain_onset: 'rain_onset.csv'
+  };
+  const store = {}; const calcs = {}; const draws = {}; const calcVals = {};
+  let status = 'loading';
+  function rowsOf(id) {
+    if (id in files) return store[id] || [];
+    return calcValue(id);
+  }
+  function calcValue(id) {
+    if (id in calcVals) return calcVals[id];
+    const c = calcs[id]; if (!c) return null;
+    const args = c.inputs.map((i) => rowsOf(i) || []);
+    try { calcVals[id] = c.fn(...args); } catch (e) { console.error('calc ' + id, e); calcVals[id] = null; }
+    return calcVals[id];
+  }
+  const dash = {
+    colors: ['#5aa9e6', '#ff6b5e', '#b49cf5', '#f2b84b', '#5fc88f'],
+    data(id) {
+      if (status !== 'ok') return { status, data: id in files ? [] : null };
+      if (!(id in files) && !(id in calcs)) return { status: 'missing', data: [] };
+      const d = rowsOf(id);
+      if (id in files) { const out = { status: 'ok', data: d }; out.columns = d.columns; return out; }
+      return { status: 'ok', data: d };
+    },
+    calc(id, spec) { calcs[id] = spec; },
+    loader() {},
+    draw(name, fn) { draws[name] = fn; },
+    onData(fn) { try { fn(); } catch (e) { console.error(e); } },
+    refresh() {}, params() { return {}; }, setParams() {}, resetParams() {}, setLink() {}
+  };
+  window.dash = dash;
+  function runAll() {
+    Object.keys(draws).forEach((name) => {
+      document.querySelectorAll(`[data-draw="${name}"]`).forEach((el) => {
+        if (el.closest('[hidden]')) return;
+        try { draws[name](el); } catch (e) { console.error('draw ' + name, e); }
+      });
+    });
+  }
+  window.__dashRunAll = runAll;
+  async function load() {
+    runAll();
+    try {
+      const entries = await Promise.all(Object.entries(files).map(async ([id, f]) => {
+        const rows = await d3.csv(f, (r) => { for (const k in r) if (r[k] === '') r[k] = null; return r; });
+        return [id, rows];
+      }));
+      entries.forEach(([id, rows]) => { store[id] = rows; });
+      status = 'ok';
+    } catch (e) { console.error(e); status = 'error'; }
+    runAll();
+    let w = window.innerWidth, t;
+    window.addEventListener('resize', () => {
+      clearTimeout(t);
+      t = setTimeout(() => { if (Math.abs(window.innerWidth - w) > 4) { w = window.innerWidth; runAll(); } }, 150);
+    });
+    document.querySelectorAll('details').forEach((d) => d.addEventListener('toggle', () => { if (d.open) runAll(); }));
+  }
+  window.addEventListener('DOMContentLoaded', () => setTimeout(load, 0));
+})();
+</script>
+</head>
+<body>
+<div id="bg-field"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
+<nav class="site-nav" aria-label="Site">
+  <span class="brand">Kolkata Civic Data</span>
+  <a href="/">Air Pollution</a>
+  <a href="/lst/">LST</a>
+  <a href="/monsoon/" class="active" aria-current="page">Monsoon</a>
+</nav>
+<main class="page">
+<style>
+.kw { display: flex; flex-direction: column; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+.kw-head { display: flex; flex-direction: column; gap: var(--cds-gap-sm); max-width: 62rem; }
+.kw-eyebrow { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .04em; text-transform: uppercase; }
+.kw-title { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: clamp(1.7rem, 4vw, 2.4rem); line-height: 1.15; text-wrap: balance; }
+.kw-lede { margin: 0; font-size: var(--cds-font-size-heading); line-height: 1.5; max-width: 46rem; }
+.kw-lede b { font-weight: var(--cds-font-weight-medium); font-variant-numeric: tabular-nums; }
+.kw-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: var(--cds-gap-md); }
+.kw-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; }
+.kw-tile-label { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.kw-tile-value { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 2rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kw-tile-value small { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); color: var(--color-fg-muted); margin-left: .2em; }
+.kw-tile-sub { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.4; }
+.kw-sec { display: flex; flex-direction: column; gap: var(--cds-gap-md); min-width: 0; }
+.kw-sec h2 { margin: 0; font-size: var(--cds-font-size-title); font-weight: var(--cds-font-weight-medium); text-wrap: balance; }
+.kw-sec h3 { margin: 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+.kw-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); line-height: 1.5; max-width: 46rem; }
+.kw-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--cds-text-secondary); margin: 0; padding: 0; list-style: none; }
+.kw-legend li { display: flex; align-items: center; gap: 6px; }
+.kw-sw { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+.kw-sw-line { width: 14px; height: 2px; display: inline-block; }
+.kw-chart { position: relative; min-height: 220px; width: 100%; }
+.kw-chart-tall { min-height: 480px; }
+.kw-chart-heat { min-height: 230px; }
+.kw-chart svg { display: block; overflow: visible; }
+.kw-chart .kw-axis text, .kw-chart .kw-lbl { fill: var(--cds-text-secondary); font-size: var(--cds-font-size-caption); font-family: var(--font-anthropic-sans); }
+.kw-chart .kw-axis path, .kw-chart .kw-axis line { stroke: var(--cds-chart-axis); }
+.kw-chart .kw-grid line { stroke: var(--cds-chart-grid); }
+.kw-chart .kw-grid path { display: none; }
+.kw-chart .kw-val { fill: var(--color-fg); font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; font-family: var(--font-anthropic-sans); }
+.kw-fail { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); padding: var(--cds-pad-md) 0; }
+.kw-tip { position: absolute; pointer-events: none; z-index: 5; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); border-radius: var(--cds-radius); padding: 8px 10px; font-size: var(--cds-font-size-caption); line-height: 1.45; max-width: 15rem; color: var(--color-fg); font-variant-numeric: tabular-nums; }
+.kw-tip strong { display: block; font-weight: var(--cds-font-weight-medium); margin-bottom: 2px; }
+.kw-tip span { display: block; color: var(--cds-text-secondary); }
+.kw-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); gap: var(--cds-gap-lg); }
+.kw-pair > div { display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+.kw-tablewrap { overflow-x: auto; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+.kw-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
+.kw-table th { text-align: right; font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: 8px 12px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; background: var(--color-panel); }
+.kw-table td { text-align: right; padding: 7px 12px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.kw-table tr:last-child td { border-bottom: 0; }
+.kw-table th:first-child, .kw-table td:first-child { text-align: left; }
+.kw-table td.kw-left, .kw-table th.kw-left { text-align: left; }
+.kw-table td.kw-wrap { white-space: normal; min-width: 14rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.kw-table tr.kw-dim td { color: var(--color-fg-muted); }
+.kw-bar { display: inline-block; height: 8px; border-radius: 2px; vertical-align: middle; margin-right: 8px; }
+.kw-pill { display: inline-block; font-size: var(--cds-font-size-caption); padding: 1px 8px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); }
+.kw-pill-warn { border-color: var(--color-warn); color: var(--color-warn); }
+.kw-notes { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-pad-md); }
+.kw-notes summary { cursor: pointer; font-weight: var(--cds-font-weight-medium); }
+.kw-notes ul { margin: var(--cds-gap-sm) 0 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 6px; color: var(--color-fg-muted); line-height: 1.5; max-width: 50rem; }
+.kw-sub { display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; padding-top: var(--cds-pad-md); }
+.kw-small { font-size: var(--cds-font-size-caption); }
+.kw-dashed { height: 0; border-top: 2px dashed; background: none; }
+.kw-chart-bands { min-height: 214px; }
+.kw-chart-onset { min-height: 320px; }
+[data-dash-source-state=refreshing] { opacity: .5; }
+</style>
+
+<div class="kw">
+  <header class="kw-head" id="top">
+    <p class="kw-eyebrow">Weather Union · <span data-draw="station-count" data-source="kpis" data-field="station_count" data-row="0">—</span> stations across Kolkata · 9 May to 8 Nov 2026 · times in IST</p>
+    <h1 class="kw-title">Kolkata Monsoon Weather 2026</h1>
+    <p class="kw-lede" data-read lang="en">A typical station recorded <b data-draw="lede-total" data-source="kpis" data-field="median_total_mm" data-row="0">—</b> mm of rain over these six months, and <b data-draw="lede-share" data-source="kpis" data-field="jjas_share_pct" data-row="0">—</b>% of it fell between June and September. <b data-draw="lede-month" data-source="kpis" data-field="wettest_months" data-row="0">—</b> brought the most rain.</p>
+  </header>
+
+  <section class="kw-tiles" id="kpis" aria-label="Season summary">
+    <div class="kw-tile" id="tile-total">
+      <p class="kw-tile-label">Season rainfall, typical station</p>
+      <p class="kw-tile-value"><span data-draw="k-total" data-source="kpis" data-field="median_total_mm" data-row="0">—</span><small>mm</small></p>
+      <p class="kw-tile-sub">Median of <span data-draw="k-ranked" data-source="kpis" data-field="ranked_stations" data-row="0">—</span> stations with full readings on at least 90% of days</p>
+    </div>
+    <div class="kw-tile" id="tile-rainy">
+      <p class="kw-tile-label">Citywide rainy days</p>
+      <p class="kw-tile-value"><span data-draw="k-rainy" data-source="kpis" data-field="city_rainy_days" data-row="0">—</span><small>days</small></p>
+      <p class="kw-tile-sub">Days when the median station got 2.5 mm or more (the IMD rainy-day mark)</p>
+    </div>
+    <div class="kw-tile" id="tile-wettest">
+      <p class="kw-tile-label">Heaviest day at one station</p>
+      <p class="kw-tile-value"><span data-draw="k-wettest" data-source="kpis" data-field="wettest_mm" data-row="0">—</span><small>mm</small></p>
+      <p class="kw-tile-sub"><span data-draw="k-wettest-st" data-source="kpis" data-field="wettest_station" data-row="0">—</span>, <span data-draw="k-wettest-dt" data-source="kpis" data-field="wettest_date" data-row="0">—</span></p>
+    </div>
+    <div class="kw-tile" id="tile-heavy">
+      <p class="kw-tile-label">Heavy-rain station-days</p>
+      <p class="kw-tile-value"><span data-draw="k-heavy" data-source="kpis" data-field="heavy_station_days" data-row="0">—</span></p>
+      <p class="kw-tile-sub">A station logging 64.5 mm or more in a day (IMD "heavy" or worse)</p>
+    </div>
+    <div class="kw-tile" id="tile-hot">
+      <p class="kw-tile-label">Hottest day</p>
+      <p class="kw-tile-value"><span data-draw="k-hot" data-source="kpis" data-field="hottest_tmax" data-row="0">—</span><small>°C</small></p>
+      <p class="kw-tile-sub">Median daily high across full weather stations, <span data-draw="k-hot-dt" data-source="kpis" data-field="hottest_date" data-row="0">—</span></p>
+    </div>
+  </section>
+
+  <section class="kw-sec" id="daily">
+    <h2>Daily rainfall</h2>
+    <p class="kw-note">Each day shows what the median station recorded and, behind it, the wettest station that day. Showers in Kolkata are patchy, so the wettest station often got far more than the typical one.</p>
+    <ul class="kw-legend">
+      <li><span class="kw-sw" data-draw="sw-med"></span>Median station</li>
+      <li><span class="kw-sw" style="background: var(--cds-chart-muted)"></span>Wettest station that day</li>
+    </ul>
+    <div class="kw-chart" id="chart-daily-rain" data-source="daily" data-draw="daily-rain"></div>
+    <h3 id="daily-temp-title">Daily temperature range</h3>
+    <ul class="kw-legend">
+      <li><span class="kw-sw" data-draw="sw-band"></span>Daily low to high (median of full weather stations)</li>
+      <li><span class="kw-sw-line" data-draw="sw-mean"></span>Daily mean</li>
+    </ul>
+    <div class="kw-chart" id="chart-daily-temp" data-source="daily" data-draw="daily-temp"></div>
+  </section>
+
+  <section class="kw-sec" id="monthly">
+    <h2>Month by month</h2>
+    <p class="kw-note">Rain columns are the median across ranked stations. Temperature and humidity are averages of the daily citywide values. May starts on the 9th and November ends on the 8th.</p>
+    <div class="kw-tablewrap">
+      <table class="kw-table" data-source="monthly" data-row-key="month">
+        <thead><tr>
+          <th data-field="month">Month</th>
+          <th data-field="rain_mm" class="kw-left">Rain (mm)</th>
+          <th data-field="rainy_days">Rainy days</th>
+          <th data-field="tmax_avg">Avg high (°C)</th>
+          <th data-field="tmin_avg">Avg low (°C)</th>
+          <th data-field="rh_avg">Humidity (%)</th>
+        </tr></thead>
+        <tbody data-draw="monthly-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="kw-sec" id="hours">
+    <h2>Rain and temperature by hour of day</h2>
+    <div class="kw-pair">
+      <div id="heat-rain">
+        <h3>Average rain by hour of day</h3>
+        <p class="kw-note">mm per station per hour. Darker means wetter.</p>
+        <div class="kw-chart kw-chart-heat" data-source="rain_hours" data-draw="heat-rain"></div>
+      </div>
+      <div id="heat-temp">
+        <h3>Average temperature by hour of day</h3>
+        <p class="kw-note">°C, median of full weather stations. Darker means hotter.</p>
+        <div class="kw-chart kw-chart-heat" data-source="temp_hours" data-draw="heat-temp"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kw-sec" id="together">
+    <h2>Rain and temperature together</h2>
+    <p class="kw-note" data-read lang="en">From June to September, days with heavy rain peaked <b data-draw="j-diff" data-source="rain_bands_summary" data-field="dry_minus_heavy_c" data-row="0">—</b> °C cooler than dry days. When a shower starts in the daytime, the air cools by about <b data-draw="j-drop" data-source="onset_summary" data-field="day_drop_30_c" data-row="0">—</b> °C within half an hour of the first rain.</p>
+
+    <div class="kw-sub" id="climo-block">
+      <h3>Monthly rain and temperature</h3>
+      <ul class="kw-legend">
+        <li><span class="kw-sw" data-draw="sw-climo-rain"></span>Rain, median station (mm, left scale)</li>
+        <li><span class="kw-sw-line" data-draw="sw-climo-hi"></span>Average daily high (°C, right scale)</li>
+        <li><span class="kw-sw-line kw-dashed" data-draw="sw-climo-lo"></span>Average daily low (°C, right scale)</li>
+      </ul>
+      <div class="kw-chart" id="chart-climo" data-source="monthly" data-draw="climo"></div>
+      <p class="kw-note kw-small">May covers the 9th to the 31st and November the 1st to the 8th, so their rain bars are shown faded.</p>
+    </div>
+
+    <div class="kw-sub" id="bands-block">
+      <h3>How hot days got, by how much rain fell</h3>
+      <p class="kw-note">June to September, each full weather station's own rain and temperature on the same day. Dots are the median daily low and high; the bar spans the two.</p>
+      <div class="kw-chart kw-chart-bands" id="chart-bands" data-source="rain_bands" data-draw="rain-bands"></div>
+    </div>
+
+    <div class="kw-sub" id="onset-block">
+      <h3>What happens when rain starts</h3>
+      <p class="kw-note">Temperature change compared with the half hour before rain, for showers that began after at least 3 dry hours and brought 2 mm or more in the first hour. Median across <span data-draw="j-events" data-source="onset_summary" data-field="events" data-row="0">—</span> showers at the full weather stations.</p>
+      <ul class="kw-legend">
+        <li><span class="kw-sw-line" data-draw="sw-on-day"></span>Showers starting 10:00–17:59 (<span data-draw="j-events-day" data-source="onset_summary" data-field="events_day" data-row="0">—</span>)</li>
+        <li><span class="kw-sw-line" data-draw="sw-on-other"></span>Evening, night and morning showers (<span data-draw="j-events-other" data-source="onset_summary" data-field="events_other" data-row="0">—</span>)</li>
+        <li><span class="kw-sw" data-draw="sw-on-rain"></span>Average rain (mm per 5 minutes)</li>
+      </ul>
+      <div class="kw-chart kw-chart-onset" id="chart-onset" data-source="rain_onset" data-draw="onset"></div>
+    </div>
+  </section>
+
+  <section class="kw-sec" id="stations">
+    <h2>Where it rained most</h2>
+    <p class="kw-note">Season totals for stations with full readings on at least 90% of days and a gauge that tracks the rest of the network. Other stations appear only in the table below.</p>
+    <ul class="kw-legend">
+      <li><span class="kw-sw" data-draw="sw-rg"></span>Rain gauge</li>
+      <li><span class="kw-sw" data-draw="sw-aws"></span>Full weather station (also measures temperature, humidity and wind)</li>
+      <li><span class="kw-sw" style="background: var(--cds-chart-muted)"></span>Gauge read far below other stations for at least a month, so its total is likely too low</li>
+    </ul>
+    <div class="kw-chart kw-chart-tall" id="chart-stations" data-source="stations" data-draw="station-bars"></div>
+    <details class="kw-notes" id="station-table">
+      <summary>All stations, including partial and faulty ones</summary>
+      <div class="kw-tablewrap" style="margin-top: var(--cds-gap-sm)">
+        <table class="kw-table" data-source="stations" data-row-key="station">
+          <thead><tr>
+            <th data-field="station">Station</th>
+            <th data-field="sensor" class="kw-left">Sensor</th>
+            <th data-field="coverage_pct">Full days (%)</th>
+            <th data-field="total_mm">Total (mm)</th>
+            <th data-field="rainy_days">Rainy days</th>
+            <th data-field="heavy_days">Heavy days</th>
+            <th data-field="wettest_mm">Wettest day (mm)</th>
+            <th data-field="wettest_date">On</th>
+            <th data-field="peak_hour_mm">Wettest hour (mm)</th>
+            <th data-field="flag" class="kw-left">Note</th>
+          </tr></thead>
+          <tbody data-draw="station-rows"></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+
+  <section class="kw-sec kw-data" id="data">
+    <h2>Data</h2>
+    <p class="kw-note">Source: one-minute readings from Weather Union stations in Kolkata, 9 May to 8 Nov 2026. These are the summary tables behind every chart on this page:</p>
+    <ul>
+      <li><a href="daily_network.csv">daily_network.csv</a>: citywide rain and temperature for each day</li>
+      <li><a href="stations.csv">stations.csv</a>: season totals and data-quality notes for each station</li>
+      <li><a href="monthly_station.csv">monthly_station.csv</a>: monthly rain for each station</li>
+      <li><a href="rain_by_hour.csv">rain_by_hour.csv</a> and <a href="temp_by_hour.csv">temp_by_hour.csv</a>: hour-of-day averages by month</li>
+      <li><a href="station_days.csv">station_days.csv</a>: each weather station's own rain and temperature per day</li>
+      <li><a href="rain_onset.csv">rain_onset.csv</a>: temperature change around the start of rain</li>
+    </ul>
+  </section>
+  <details class="kw-notes" id="notes">
+    <summary>How these numbers were made</summary>
+    <ul>
+      <li>Source: your Weather Union export of one-minute readings for Kolkata, 9 May to 8 Nov 2026. Device times are IST; temperatures bottom out around 5 am and peak around 1 pm. Duplicate readings were removed.</li>
+      <li>Daily rain is the day's final rain accumulation, which resets at midnight. It matches the sum of the minute-by-minute rain readings.</li>
+      <li>Single minutes reporting more than 5 mm were removed from every total. That is a rate of 300 mm an hour, they arrive with no gap in the data before them, and the stations around them saw nothing similar, so they are treated as sensor glitches. The station table lists how much was removed at each station.</li>
+      <li>A "full day" means the station sent rain readings for at least 80% of its minutes (1,152 of 1,440). Daily and rainy-day figures use full days only. Season and monthly totals also count partial days, because the accumulation still records all rain up to the last reading.</li>
+      <li>Gauges whose daily rain from June to September barely moves with the median of the other stations (correlation below 0.3) are excluded from all rain figures. That removes Howrah, which logged heavy rain on days the rest of the city was dry and almost nothing in July and August, and Chandannagar, which looks blocked.</li>
+      <li>Gauges that read below 35% of the other stations' median in a whole monsoon month are kept but marked, because their totals are probably too low.</li>
+      <li>The rain figures above the station ranking are medians across stations, so a single faulty gauge cannot move them much. August and September totals are within a few percent of each other, so treat either as the wettest month.</li>
+      <li>Temperature and humidity come from six full weather stations: Behala, Bhowanipore, Kankurgachi, Salt Lake 2, Shibpur and Shrirampur. Daily highs and lows are taken from the minute readings after a 5-minute rolling median, on full days only. New Town's sensor reported impossible values and Barabazar Market reports mostly in daytime, so both are left out.</li>
+      <li>Wind is not shown. Readings disagree too much between stations to be trusted: some anemometers barely register any wind, while others report near-gale speeds for hours at a time.</li>
+      <li>Heat index is not shown. These sensors appear to read humidity high, and the heat-index formula magnifies that into implausible values.</li>
+    </ul>
+  </details>
+</div>
+
+<script>
+(function () {
+  const parse = d3.utcParse('%Y-%m-%d');
+  const fmtDay = d3.utcFormat('%-d %b');
+  const fmtDayLong = d3.utcFormat('%a %-d %b');
+  const monthName = (m) => d3.utcFormat('%B')(parse(m + '-01'));
+  const monthShort = (m) => d3.utcFormat('%b')(parse(m + '-01'));
+  const num = (v) => (v === null || v === undefined || v === '' ? NaN : +v);
+  const f0 = d3.format(',.0f');
+  const f1 = d3.format(',.1f');
+  const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function placeholder(el, status, isChart) {
+    el.classList.toggle('dash-skeleton', status === 'loading');
+    if (isChart) {
+      if (status === 'error' || status === 'missing') {
+        const p = document.createElement('p');
+        p.className = 'kw-fail';
+        p.textContent = 'Failed to load';
+        el.replaceChildren(p);
+      } else {
+        el.replaceChildren();
+      }
+    } else {
+      el.textContent = '—';
+    }
+  }
+
+  function measure(svg, texts, cls) {
+    const g = svg.append('g').attr('class', cls || 'kw-lbl');
+    let w = 0;
+    texts.forEach((t) => {
+      const n = g.append('text').attr('class', 'kw-lbl').text(t).node();
+      w = Math.max(w, n.getComputedTextLength());
+    });
+    g.remove();
+    return w;
+  }
+
+  function tooltip(el) {
+    const tip = document.createElement('div');
+    tip.className = 'kw-tip';
+    tip.hidden = true;
+    el.appendChild(tip);
+    return {
+      show(title, lines, x, y) {
+        const s = document.createElement('strong');
+        s.textContent = title;
+        tip.replaceChildren(s, ...lines.map((l) => { const sp = document.createElement('span'); sp.textContent = l; return sp; }));
+        tip.hidden = false;
+        const W = el.clientWidth;
+        const tw = tip.offsetWidth;
+        const th = tip.offsetHeight;
+        let left = x + 12;
+        if (left + tw > W) left = Math.max(0, x - tw - 12);
+        let top = Math.max(0, y - th - 8);
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+      },
+      hide() { tip.hidden = true; }
+    };
+  }
+
+  window.kw = { parse, fmtDay, fmtDayLong, monthName, monthShort, num, f0, f1, placeholder, measure, tooltip, reduced };
+})();
+</script>
+
+<script>
+/* Calculations readers can inspect in Sources */
+dash.calc('monthly', {
+  title: 'Monthly summary',
+  description: 'Per month: median rain and rainy days across ranked stations, plus average daily high, low and humidity from the citywide daily values.',
+  inputs: ['monthly_station', 'daily'],
+  fn: (stationMonths, days) => {
+    const ranked = stationMonths.filter((r) => r.in_ranking === 'yes');
+    const months = Array.from(new Set(stationMonths.map((r) => r.month))).sort();
+    return months.map((month) => {
+      const sm = ranked.filter((r) => r.month === month);
+      const dm = days.filter((d) => d.date.slice(0, 7) === month);
+      const avg = (k) => {
+        const v = dm.map((d) => d[k]).filter((x) => x !== null && x !== '' && x !== undefined).map(Number);
+        return v.length ? Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 10) / 10 : null;
+      };
+      const med = (k) => {
+        const v = sm.map((r) => Number(r[k])).sort((a, b) => a - b);
+        if (!v.length) return null;
+        const mid = Math.floor(v.length / 2);
+        return v.length % 2 ? v[mid] : (v[mid - 1] + v[mid]) / 2;
+      };
+      return {
+        month,
+        days: dm.length,
+        rain_mm: med('rain_mm') === null ? null : Math.round(med('rain_mm') * 10) / 10,
+        rainy_days: med('rainy_days'),
+        tmax_avg: avg('tmax_c'),
+        tmin_avg: avg('tmin_c'),
+        rh_avg: avg('rh_pct')
+      };
+    });
+  }
+});
+
+dash.calc('kpis', {
+  title: 'Season headline figures',
+  description: 'Season totals and records used in the summary tiles.',
+  inputs: ['stations', 'daily', 'monthly'],
+  fn: (stations, days, months) => {
+    const ranked = stations.filter((s) => s.in_ranking === 'yes').map((s) => Number(s.total_mm)).sort((a, b) => a - b);
+    const mid = Math.floor(ranked.length / 2);
+    const medianTotal = ranked.length % 2 ? ranked[mid] : (ranked[mid - 1] + ranked[mid]) / 2;
+    const usable = stations.filter((s) => s.excluded !== 'yes');
+    const withDays = usable.filter((s) => Number(s.good_days) > 0 && s.wettest_mm !== null && s.wettest_mm !== '');
+    const wettest = withDays.reduce((a, b) => (Number(b.wettest_mm) > Number(a.wettest_mm) ? b : a));
+    const hot = days.filter((d) => d.tmax_c !== null && d.tmax_c !== '').reduce((a, b) => (Number(b.tmax_c) > Number(a.tmax_c) ? b : a));
+    const total = months.reduce((a, m) => a + (m.rain_mm || 0), 0);
+    const jjas = months.filter((m) => ['06', '07', '08', '09'].includes(m.month.slice(5))).reduce((a, m) => a + (m.rain_mm || 0), 0);
+    const byRain = months.slice().sort((a, b) => (b.rain_mm || 0) - (a.rain_mm || 0));
+    const nearTie = byRain.length > 1 && (byRain[1].rain_mm || 0) >= 0.95 * (byRain[0].rain_mm || 0);
+    const wetPick = (nearTie ? byRain.slice(0, 2) : byRain.slice(0, 1)).sort((a, b) => (a.month < b.month ? -1 : 1));
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    return [{
+      station_count: stations.length,
+      ranked_stations: ranked.length,
+      median_total_mm: Math.round(medianTotal),
+      city_rainy_days: days.filter((d) => Number(d.rain_median_mm) >= 2.5).length,
+      wettest_mm: Number(wettest.wettest_mm),
+      wettest_station: wettest.station,
+      wettest_date: wettest.wettest_date,
+      heavy_station_days: usable.reduce((a, s) => a + Number(s.heavy_days || 0), 0),
+      hottest_tmax: Number(hot.tmax_c),
+      hottest_date: hot.date,
+      jjas_share_pct: total ? Math.round((jjas / total) * 100) : null,
+      wettest_months: wetPick.map((m) => monthNames[Number(m.month.slice(5)) - 1]).join(' and ')
+    }];
+  }
+});
+</script>
+
+<script>
+/* Numbers in the header and tiles */
+(function () {
+  const k = (name, field, fmt) => dash.draw(name, (el) => {
+    const r = dash.data('kpis');
+    if (r.status !== 'ok' || !r.data || !r.data.length) return kw.placeholder(el, r.status);
+    el.classList.remove('dash-skeleton');
+    const v = r.data[0][field];
+    el.textContent = v === null || v === undefined ? '—' : fmt(v);
+  });
+  const id = (v) => String(v);
+  const date = (v) => kw.fmtDay(kw.parse(v));
+  k('station-count', 'station_count', kw.f0);
+  k('lede-total', 'median_total_mm', kw.f0);
+  k('lede-share', 'jjas_share_pct', kw.f0);
+  k('lede-month', 'wettest_months', id);
+  k('k-total', 'median_total_mm', kw.f0);
+  k('k-ranked', 'ranked_stations', kw.f0);
+  k('k-rainy', 'city_rainy_days', kw.f0);
+  k('k-wettest', 'wettest_mm', kw.f1);
+  k('k-wettest-st', 'wettest_station', id);
+  k('k-wettest-dt', 'wettest_date', date);
+  k('k-heavy', 'heavy_station_days', kw.f0);
+  k('k-hot', 'hottest_tmax', kw.f1);
+  k('k-hot-dt', 'hottest_date', date);
+
+  // legend swatches take series colors
+  const sw = (name, prop, color, extra) => dash.draw(name, (el) => {
+    el.style[prop] = color();
+    if (extra) extra(el);
+  });
+  sw('sw-med', 'background', () => dash.colors[0]);
+  sw('sw-band', 'background', () => dash.colors[1], (el) => { el.style.opacity = '0.35'; });
+  sw('sw-mean', 'background', () => dash.colors[1]);
+  sw('sw-rg', 'background', () => dash.colors[0]);
+  sw('sw-aws', 'background', () => dash.colors[2]);
+})();
+</script>
+
+<script>
+/* Daily rainfall chart */
+dash.draw('daily-rain', (el) => {
+  const r = dash.data('daily');
+  if (r.status !== 'ok') return kw.placeholder(el, r.status, true);
+  el.classList.remove('dash-skeleton');
+  el.replaceChildren();
+  const rows = r.data.map((d) => ({
+    date: kw.parse(d.date), med: kw.num(d.rain_median_mm), max: kw.num(d.rain_max_mm),
+    st: d.rain_max_station, n: kw.num(d.rain_stations), wet: kw.num(d.wet_station_pct)
+  })).filter((d) => d.date);
+  if (!rows.length) return;
+  const W = Math.max(280, el.clientWidth || 600);
+  const H = 230;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('role', 'img').attr('aria-label', 'Daily rainfall in Kolkata: median station and wettest station each day, May to November 2026');
+  const y = d3.scaleLinear().domain([0, d3.max(rows, (d) => d.max) || 1]).nice().range([H - 24, 8]);
+  const yt = y.ticks(4);
+  const lw = kw.measure(svg, yt.map((t) => t + ' mm'));
+  const m = { t: 8, r: 6, b: 24, l: Math.ceil(lw) + 8 };
+  const x0 = rows[0].date, x1 = d3.utcDay.offset(rows[rows.length - 1].date, 1);
+  const x = d3.scaleUtc().domain([x0, x1]).range([m.l, W - m.r]);
+  const bw = Math.max(1, (W - m.l - m.r) / rows.length - (W > 500 ? 1 : 0.4));
+  svg.append('g').attr('class', 'kw-grid').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(y).tickValues(yt).tickSize(-(W - m.l - m.r)).tickFormat(''));
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(y).tickValues(yt).tickSize(0).tickPadding(6).tickFormat((t) => t + ' mm'))
+    .call((g) => g.select('.domain').remove());
+  const months = d3.utcMonth.range(d3.utcMonth.ceil(x0), x1);
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues(months).tickFormat(d3.utcFormat(W < 420 ? '%b' : '%B')).tickSizeOuter(0));
+  const gMax = svg.append('g');
+  const gMed = svg.append('g');
+  gMax.selectAll('rect').data(rows).join('rect')
+    .attr('x', (d) => x(d.date)).attr('width', bw)
+    .attr('y', (d) => y(isNaN(d.max) ? 0 : d.max)).attr('height', (d) => y(0) - y(isNaN(d.max) ? 0 : d.max))
+    .style('fill', 'var(--cds-chart-muted)');
+  const med = gMed.selectAll('rect').data(rows).join('rect')
+    .attr('x', (d) => x(d.date)).attr('width', bw)
+    .style('fill', dash.colors[0]);
+  const first = !el.dataset.drawn && !kw.reduced();
+  if (first) {
+    med.attr('y', y(0)).attr('height', 0)
+      .transition().duration(600).delay((d, i) => i * 2).ease(d3.easeCubicOut)
+      .attr('y', (d) => y(isNaN(d.med) ? 0 : d.med)).attr('height', (d) => y(0) - y(isNaN(d.med) ? 0 : d.med));
+  } else {
+    med.attr('y', (d) => y(isNaN(d.med) ? 0 : d.med)).attr('height', (d) => y(0) - y(isNaN(d.med) ? 0 : d.med));
+  }
+  el.dataset.drawn = '1';
+  const hl = svg.append('rect').attr('y', m.t).attr('height', H - m.b - m.t).attr('width', bw)
+    .style('fill', 'var(--cds-chart-reference)').style('opacity', 0.25).attr('visibility', 'hidden');
+  const tip = kw.tooltip(el);
+  const bis = d3.bisector((d) => d.date).right;
+  svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H - m.b)
+    .style('fill', 'transparent')
+    .on('pointermove', (ev) => {
+      const [px, py] = d3.pointer(ev);
+      const i = Math.max(0, Math.min(rows.length - 1, bis(rows, x.invert(px)) - 1));
+      const d = rows[i];
+      hl.attr('x', x(d.date)).attr('visibility', 'visible');
+      const scale = el.clientWidth / W;
+      tip.show(kw.fmtDayLong(d.date), [
+        `Median station: ${kw.f1(d.med)} mm`,
+        `Wettest: ${d.st} ${kw.f1(d.max)} mm`,
+        `Stations with 2.5 mm or more: ${kw.f0(d.wet)}%`,
+        `${kw.f0(d.n)} stations reporting`
+      ], x(d.date) * scale, py * scale);
+    })
+    .on('pointerleave', () => { hl.attr('visibility', 'hidden'); tip.hide(); });
+});
+
+/* Daily temperature band */
+dash.draw('daily-temp', (el) => {
+  const r = dash.data('daily');
+  if (r.status !== 'ok') return kw.placeholder(el, r.status, true);
+  el.classList.remove('dash-skeleton');
+  el.replaceChildren();
+  const rows = r.data.map((d) => ({
+    date: kw.parse(d.date), hi: kw.num(d.tmax_c), lo: kw.num(d.tmin_c), mean: kw.num(d.tmean_c), rh: kw.num(d.rh_pct), n: kw.num(d.temp_stations)
+  })).filter((d) => d.date);
+  const ok = rows.filter((d) => !isNaN(d.hi) && !isNaN(d.lo));
+  if (!ok.length) return;
+  const W = Math.max(280, el.clientWidth || 600);
+  const H = 200;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('role', 'img').attr('aria-label', 'Daily low, mean and high temperature in Kolkata, May to November 2026');
+  const y = d3.scaleLinear().domain([Math.floor(d3.min(ok, (d) => d.lo)) - 1, Math.ceil(d3.max(ok, (d) => d.hi)) + 1]).nice().range([H - 24, 8]);
+  const yt = y.ticks(4);
+  const lw = kw.measure(svg, yt.map((t) => t + ' °C'));
+  const m = { t: 8, r: 6, b: 24, l: Math.ceil(lw) + 8 };
+  const x0 = rows[0].date, x1 = d3.utcDay.offset(rows[rows.length - 1].date, 1);
+  const x = d3.scaleUtc().domain([x0, x1]).range([m.l, W - m.r]);
+  const half = (W - m.l - m.r) / rows.length / 2;
+  const cx = (d) => x(d.date) + half;
+  svg.append('g').attr('class', 'kw-grid').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(y).tickValues(yt).tickSize(-(W - m.l - m.r)).tickFormat(''));
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(y).tickValues(yt).tickSize(0).tickPadding(6).tickFormat((t) => t + ' °C'))
+    .call((g) => g.select('.domain').remove());
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues(d3.utcMonth.range(d3.utcMonth.ceil(x0), x1)).tickFormat(d3.utcFormat(W < 420 ? '%b' : '%B')).tickSizeOuter(0));
+  const def = (d) => !isNaN(d.hi) && !isNaN(d.lo);
+  svg.append('path').datum(rows)
+    .attr('d', d3.area().defined(def).x(cx).y0((d) => y(d.lo)).y1((d) => y(d.hi)))
+    .style('fill', dash.colors[1]).style('opacity', 0.3);
+  svg.append('path').datum(rows)
+    .attr('d', d3.line().defined((d) => !isNaN(d.mean)).x(cx).y((d) => y(d.mean)))
+    .style('fill', 'none').style('stroke', dash.colors[1]).style('stroke-width', 1.5);
+  const dot = svg.append('g').attr('visibility', 'hidden');
+  const dHi = dot.append('circle').attr('r', 3).style('fill', dash.colors[1]);
+  const dLo = dot.append('circle').attr('r', 3).style('fill', dash.colors[1]);
+  const tip = kw.tooltip(el);
+  const bis = d3.bisector((d) => d.date).right;
+  svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H - m.b)
+    .style('fill', 'transparent')
+    .on('pointermove', (ev) => {
+      const [px, py] = d3.pointer(ev);
+      const i = Math.max(0, Math.min(rows.length - 1, bis(rows, x.invert(px)) - 1));
+      const d = rows[i];
+      if (!def(d)) { dot.attr('visibility', 'hidden'); tip.hide(); return; }
+      dot.attr('visibility', 'visible');
+      dHi.attr('cx', cx(d)).attr('cy', y(d.hi));
+      dLo.attr('cx', cx(d)).attr('cy', y(d.lo));
+      const scale = el.clientWidth / W;
+      tip.show(kw.fmtDayLong(d.date), [
+        `High ${kw.f1(d.hi)} °C · Low ${kw.f1(d.lo)} °C`,
+        `Mean ${kw.f1(d.mean)} °C`,
+        `Humidity ${kw.f0(d.rh)}%`,
+        `${kw.f0(d.n)} weather stations`
+      ], cx(d) * scale, py * scale);
+    })
+    .on('pointerleave', () => { dot.attr('visibility', 'hidden'); tip.hide(); });
+});
+</script>
+
+<script>
+/* Monthly table */
+dash.draw('monthly-rows', (tb) => {
+  const r = dash.data('monthly');
+  if (r.status !== 'ok' || !r.data) { tb.replaceChildren(); return; }
+  const rows = r.data;
+  const maxRain = d3.max(rows, (d) => d.rain_mm || 0) || 1;
+  const fmt1 = (v) => (v === null || v === undefined ? '—' : kw.f1(v));
+  tb.replaceChildren(...rows.map((d) => {
+    const tr = document.createElement('tr');
+    tr.dataset.key = d.month;
+    const td = (text, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = text; return c; };
+    const mo = d.month.slice(5);
+    const label = kw.monthName(d.month) + (mo === '05' ? ' (9–31)' : mo === '11' ? ' (1–8)' : '');
+    const rain = document.createElement('td');
+    rain.className = 'kw-left';
+    const bar = document.createElement('span');
+    bar.className = 'kw-bar';
+    bar.style.width = Math.max(2, Math.round((d.rain_mm || 0) / maxRain * 90)) + 'px';
+    bar.style.background = dash.colors[0];
+    const val = document.createElement('span');
+    val.textContent = d.rain_mm === null ? '—' : kw.f0(d.rain_mm);
+    rain.append(bar, val);
+    tr.append(td(label), rain, td(d.rainy_days === null ? '—' : kw.f0(d.rainy_days)), td(fmt1(d.tmax_avg)), td(fmt1(d.tmin_avg)), td(d.rh_avg === null ? '—' : kw.f0(d.rh_avg)));
+    return tr;
+  }));
+});
+</script>
+
+<script>
+/* Hour-of-day heatmaps */
+(function () {
+  function heat(el, r, opts) {
+    if (r.status !== 'ok') return kw.placeholder(el, r.status, true);
+    el.classList.remove('dash-skeleton');
+    el.replaceChildren();
+    const rows = r.data.map((d) => ({ month: d.month, hour: +d.hour, v: kw.num(d[opts.key]), raw: d }));
+    const months = Array.from(new Set(rows.map((d) => d.month))).sort();
+    if (!months.length) return;
+    const W = Math.max(260, el.clientWidth || 400);
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img').attr('aria-label', opts.aria);
+    const lw = kw.measure(svg, months.map((m) => kw.monthShort(m)));
+    const m = { t: 4, r: 2, b: 54, l: Math.ceil(lw) + 8 };
+    const cw = (W - m.l - m.r) / 24;
+    const ch = Math.max(18, Math.min(30, cw * 1.1));
+    const H = m.t + ch * months.length + m.b;
+    svg.attr('viewBox', `0 0 ${W} ${H}`);
+    const vals = rows.map((d) => d.v).filter((v) => !isNaN(v));
+    const lo = opts.zero ? 0 : d3.min(vals), hi = d3.max(vals);
+    const op = (v) => (isNaN(v) ? 0 : 0.06 + 0.94 * Math.pow((v - lo) / ((hi - lo) || 1), opts.gamma || 1));
+    const y = (mo) => m.t + months.indexOf(mo) * ch;
+    svg.append('g').selectAll('text').data(months).join('text').attr('class', 'kw-lbl')
+      .attr('x', m.l - 6).attr('y', (mo) => y(mo) + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
+      .text((mo) => kw.monthShort(mo));
+    const cells = svg.append('g').selectAll('rect').data(rows).join('rect')
+      .attr('x', (d) => m.l + d.hour * cw + 0.5).attr('y', (d) => y(d.month) + 0.5)
+      .attr('width', Math.max(1, cw - 1)).attr('height', ch - 1).attr('rx', 2)
+      .style('fill', opts.color).style('fill-opacity', (d) => op(d.v));
+    const hy = m.t + ch * months.length + 14;
+    const step = W < 420 ? 6 : 3;
+    svg.append('g').selectAll('text').data(d3.range(0, 24, step)).join('text').attr('class', 'kw-lbl')
+      .attr('x', (h) => m.l + h * cw).attr('y', hy).attr('text-anchor', 'start')
+      .text((h) => String(h).padStart(2, '0') + ':00');
+    // legend
+    const ly = hy + 14;
+    const n = 5;
+    const lgW = Math.min(150, W - m.l - 80);
+    const sw = lgW / n;
+    const lg = svg.append('g');
+    const ticks = d3.range(n).map((i) => lo + (hi - lo) * (i + 0.5) / n);
+    lg.selectAll('rect').data(ticks).join('rect').attr('x', (d, i) => m.l + i * sw).attr('y', ly)
+      .attr('width', sw - 2).attr('height', 10).attr('rx', 2)
+      .style('fill', opts.color).style('fill-opacity', (d) => op(d));
+    const tLo = lg.append('text').attr('class', 'kw-lbl').attr('x', m.l + lgW + 6).attr('y', ly + 9)
+      .text(`${opts.fmt(lo)} to ${opts.fmt(hi)} ${opts.unit}`);
+    const tip = kw.tooltip(el);
+    cells.on('pointerenter', (ev, d) => {
+      const scale = el.clientWidth / W;
+      cells.style('stroke', null);
+      d3.select(ev.currentTarget).style('stroke', 'var(--color-fg)').style('stroke-width', 1);
+      tip.show(`${kw.monthName(d.month)}, ${String(d.hour).padStart(2, '0')}:00–${String((d.hour + 1) % 24).padStart(2, '0')}:00`,
+        opts.lines(d), (m.l + d.hour * cw + cw) * scale, y(d.month) * scale);
+    }).on('pointerleave', (ev) => { d3.select(ev.currentTarget).style('stroke', null); tip.hide(); });
+  }
+
+  dash.draw('heat-rain', (el) => heat(el, dash.data('rain_hours'), {
+    key: 'mean_mm', zero: true, gamma: 0.6, color: dash.colors[0], unit: 'mm/h', fmt: d3.format('.2f'),
+    aria: 'Average rain per station by hour of day and month, Kolkata 2026',
+    lines: (d) => [`${d3.format('.2f')(d.v)} mm per station-hour`, `Rain in ${kw.f0(+d.raw.wet_pct)}% of station-hours`]
+  }));
+  dash.draw('heat-temp', (el) => heat(el, dash.data('temp_hours'), {
+    key: 'temp_c', zero: false, gamma: 1, color: dash.colors[1], unit: '°C', fmt: d3.format('.1f'),
+    aria: 'Average temperature by hour of day and month, Kolkata 2026',
+    lines: (d) => [`${kw.f1(d.v)} °C`, `Humidity ${kw.f0(+d.raw.rh_pct)}%`]
+  }));
+})();
+</script>
+
+<script>
+/* Station ranking and table */
+dash.draw('station-bars', (el) => {
+  const r = dash.data('stations');
+  if (r.status !== 'ok') return kw.placeholder(el, r.status, true);
+  el.classList.remove('dash-skeleton');
+  el.replaceChildren();
+  const rows = r.data.filter((d) => d.in_ranking === 'yes')
+    .map((d) => ({ name: d.station, total: +d.total_mm, aws: d.sensor !== 'Rain gauge', under: d.under_reads === 'yes', raw: d }))
+    .sort((a, b) => b.total - a.total);
+  if (!rows.length) return;
+  const W = Math.max(280, el.clientWidth || 600);
+  const rh = 22;
+  const svg = d3.select(el).append('svg').attr('width', '100%')
+    .attr('role', 'img').attr('aria-label', 'Season rainfall total by station, ranked, Kolkata May to November 2026');
+  const lw = kw.measure(svg, rows.map((d) => d.name));
+  const vw = kw.measure(svg, rows.map((d) => kw.f0(d.total)));
+  const m = { t: 4, r: Math.ceil(vw) + 10, b: 22, l: Math.ceil(lw) + 10 };
+  const H = m.t + rows.length * rh + m.b;
+  svg.attr('viewBox', `0 0 ${W} ${H}`);
+  const x = d3.scaleLinear().domain([0, d3.max(rows, (d) => d.total)]).nice().range([m.l, W - m.r]);
+  const xt = x.ticks(W < 420 ? 3 : 5);
+  svg.append('g').attr('class', 'kw-grid').attr('transform', `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues(xt).tickSize(-(H - m.b - m.t)).tickFormat(''));
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues(xt).tickSize(0).tickPadding(6).tickFormat((t) => kw.f0(t) + ' mm'))
+    .call((g) => g.select('.domain').remove());
+  const g = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (d, i) => `translate(0,${m.t + i * rh})`);
+  g.append('text').attr('class', 'kw-lbl').attr('x', m.l - 8).attr('y', rh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').text((d) => d.name);
+  const bars = g.append('rect').attr('x', m.l).attr('y', 3).attr('height', rh - 6).attr('rx', 2)
+    .style('fill', (d) => (d.under ? 'var(--cds-chart-muted)' : d.aws ? dash.colors[2] : dash.colors[0]));
+  const first = !el.dataset.drawn && !kw.reduced();
+  if (first) bars.attr('width', 0).transition().duration(600).delay((d, i) => i * 15).ease(d3.easeCubicOut).attr('width', (d) => x(d.total) - m.l);
+  else bars.attr('width', (d) => x(d.total) - m.l);
+  el.dataset.drawn = '1';
+  g.append('text').attr('class', 'kw-val').attr('x', (d) => x(d.total) + 6).attr('y', rh / 2).attr('dy', '0.35em').text((d) => kw.f0(d.total));
+  const tip = kw.tooltip(el);
+  g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', rh).style('fill', 'transparent')
+    .on('pointerenter', (ev, d) => {
+      const i = rows.indexOf(d);
+      const scale = el.clientWidth / W;
+      const s = d.raw;
+      tip.show(d.name, [
+        `${kw.f0(d.total)} mm on ${s.good_days} full days`,
+        `${s.rainy_days} rainy days, ${s.heavy_days} heavy`,
+        `Wettest day ${kw.f1(+s.wettest_mm)} mm, ${kw.fmtDay(kw.parse(s.wettest_date))}`,
+        s.peak_hour_mm ? `Wettest hour ${kw.f1(+s.peak_hour_mm)} mm` : '',
+        d.under ? s.flag : ''
+      ].filter(Boolean), Math.min(x(d.total), W * 0.6) * scale, (m.t + i * rh) * scale);
+    })
+    .on('pointerleave', () => tip.hide());
+});
+
+dash.draw('station-rows', (tb) => {
+  const r = dash.data('stations');
+  if (r.status !== 'ok') { tb.replaceChildren(); return; }
+  const rows = r.data.slice().sort((a, b) => (+b.total_mm) - (+a.total_mm));
+  const f = (v, fmt) => (v === null || v === undefined || v === '' ? '—' : fmt(+v));
+  tb.replaceChildren(...rows.map((d) => {
+    const tr = document.createElement('tr');
+    tr.dataset.key = d.station;
+    if (d.in_ranking !== 'yes') tr.className = 'kw-dim';
+    const td = (text, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = text; return c; };
+    const sensor = document.createElement('td');
+    sensor.className = 'kw-left';
+    const pill = document.createElement('span');
+    pill.className = 'kw-pill';
+    pill.textContent = d.sensor;
+    sensor.append(pill);
+    const note = document.createElement('td');
+    note.className = 'kw-wrap kw-left';
+    if (d.flag) {
+      const p = document.createElement('span');
+      p.className = 'kw-pill kw-pill-warn';
+      p.textContent = d.flag;
+      note.append(p);
+    }
+    tr.append(
+      td(d.station), sensor, td(f(d.coverage_pct, kw.f0)), td(f(d.total_mm, kw.f0)),
+      td(f(d.rainy_days, kw.f0)), td(f(d.heavy_days, kw.f0)), td(f(d.wettest_mm, kw.f1)),
+      td(d.wettest_date ? kw.fmtDay(kw.parse(d.wettest_date)) : '—'), td(f(d.peak_hour_mm, kw.f1)), note
+    );
+    return tr;
+  }));
+});
+</script>
+
+<script>
+/* Rain and temperature together: calculations */
+dash.calc('rain_bands', {
+  title: 'Temperature by rain category',
+  description: 'June to September station-days grouped by IMD rain category, with median daily high, low and humidity.',
+  inputs: ['station_days'],
+  fn: (stationDays) => {
+    const cats = [
+      { band: 'Dry', range: 'under 2.5 mm', lo: -1, hi: 2.5 },
+      { band: 'Light', range: '2.5–15.5 mm', lo: 2.5, hi: 15.6 },
+      { band: 'Moderate', range: '15.6–64.4 mm', lo: 15.6, hi: 64.5 },
+      { band: 'Heavy', range: '64.5 mm or more', lo: 64.5, hi: Infinity }
+    ];
+    const monsoon = stationDays.filter((d) => ['06', '07', '08', '09'].includes(String(d.month).slice(5)));
+    const median = (v) => {
+      const s = v.filter((x) => !isNaN(x)).sort((a, b) => a - b);
+      if (!s.length) return null;
+      const m = Math.floor(s.length / 2);
+      return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+    };
+    const r1 = (x) => (x === null ? null : Math.round(x * 10) / 10);
+    return cats.map((c) => {
+      const rows = monsoon.filter((d) => Number(d.rain_mm) >= c.lo && Number(d.rain_mm) < c.hi);
+      return {
+        band: c.band,
+        range: c.range,
+        days: rows.length,
+        tmax_median: r1(median(rows.map((d) => Number(d.tmax_c)))),
+        tmin_median: r1(median(rows.map((d) => Number(d.tmin_c)))),
+        rh_median: r1(median(rows.map((d) => Number(d.rh_pct))))
+      };
+    });
+  }
+});
+
+dash.calc('rain_bands_summary', {
+  title: 'Dry vs heavy-rain days',
+  description: 'How much lower the median daily high was on heavy-rain days than on dry days, June to September.',
+  inputs: ['rain_bands'],
+  fn: (bands) => {
+    const dry = bands.find((b) => b.band === 'Dry');
+    const heavy = bands.find((b) => b.band === 'Heavy');
+    const diff = dry && heavy && dry.tmax_median !== null && heavy.tmax_median !== null ? Math.round((dry.tmax_median - heavy.tmax_median) * 10) / 10 : null;
+    return [{ dry_minus_heavy_c: diff }];
+  }
+});
+
+dash.calc('onset_summary', {
+  title: 'Cooling when rain starts',
+  description: 'Median temperature drop 30 minutes after a daytime shower starts, and how many showers were averaged.',
+  inputs: ['rain_onset'],
+  fn: (onset) => {
+    const at30 = onset.find((r) => Number(r.minute) === 30);
+    return [{
+      day_drop_30_c: at30 ? Math.round(-Number(at30.temp_change_day_c) * 10) / 10 : null,
+      events: onset.length ? Number(onset[0].events_day) + Number(onset[0].events_other) : null,
+      events_day: onset.length ? Number(onset[0].events_day) : null,
+      events_other: onset.length ? Number(onset[0].events_other) : null
+    }];
+  }
+});
+</script>
+
+<script>
+/* Rain and temperature together: numbers and swatches */
+(function () {
+  const one = (name, src, field, fmt) => dash.draw(name, (el) => {
+    const r = dash.data(src);
+    if (r.status !== 'ok' || !r.data || !r.data.length) return kw.placeholder(el, r.status);
+    el.classList.remove('dash-skeleton');
+    const v = r.data[0][field];
+    el.textContent = v === null || v === undefined ? '—' : fmt(v);
+  });
+  one('j-diff', 'rain_bands_summary', 'dry_minus_heavy_c', kw.f1);
+  one('j-drop', 'onset_summary', 'day_drop_30_c', kw.f1);
+  one('j-events', 'onset_summary', 'events', kw.f0);
+  one('j-events-day', 'onset_summary', 'events_day', kw.f0);
+  one('j-events-other', 'onset_summary', 'events_other', kw.f0);
+  const sw = (name, fn) => dash.draw(name, fn);
+  sw('sw-climo-rain', (el) => { el.style.background = dash.colors[0]; });
+  sw('sw-climo-hi', (el) => { el.style.background = dash.colors[1]; });
+  sw('sw-climo-lo', (el) => { el.style.borderTopColor = dash.colors[1]; });
+  sw('sw-on-day', (el) => { el.style.background = dash.colors[1]; });
+  sw('sw-on-other', (el) => { el.style.background = dash.colors[3] || dash.colors[2]; });
+  sw('sw-on-rain', (el) => { el.style.background = dash.colors[0]; });
+})();
+</script>
+
+<script>
+/* Climate chart: monthly rain bars with temperature lines */
+dash.draw('climo', (el) => {
+  const r = dash.data('monthly');
+  if (r.status !== 'ok' || !r.data) return kw.placeholder(el, r.status === 'ok' ? 'loading' : r.status, true);
+  el.classList.remove('dash-skeleton');
+  el.replaceChildren();
+  const rows = r.data.map((d) => ({ month: d.month, rain: d.rain_mm, hi: d.tmax_avg, lo: d.tmin_avg, rh: d.rh_avg, partial: ['05', '11'].includes(d.month.slice(5)) }));
+  if (!rows.length) return;
+  const W = Math.max(280, el.clientWidth || 600);
+  const H = 250;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('role', 'img').attr('aria-label', 'Monthly rainfall bars with average daily high and low temperature lines, Kolkata May to November 2026');
+  const yR = d3.scaleLinear().domain([0, d3.max(rows, (d) => d.rain || 0) || 1]).nice().range([H - 24, 10]);
+  const temps = rows.flatMap((d) => [d.hi, d.lo]).filter((v) => v !== null);
+  const yT = d3.scaleLinear().domain([Math.floor(d3.min(temps)) - 2, Math.ceil(d3.max(temps)) + 1]).nice().range([H - 24, 10]);
+  const rt = yR.ticks(4), tt = yT.ticks(4);
+  const lw = kw.measure(svg, rt.map((t) => kw.f0(t) + ' mm'));
+  const rw = kw.measure(svg, tt.map((t) => t + ' °C'));
+  const m = { t: 10, r: Math.ceil(rw) + 8, b: 24, l: Math.ceil(lw) + 8 };
+  const x = d3.scaleBand().domain(rows.map((d) => d.month)).range([m.l, W - m.r]).padding(0.3);
+  svg.append('g').attr('class', 'kw-grid').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(yR).tickValues(rt).tickSize(-(W - m.l - m.r)).tickFormat(''));
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(yR).tickValues(rt).tickSize(0).tickPadding(6).tickFormat((t) => kw.f0(t) + ' mm'))
+    .call((g) => g.select('.domain').remove());
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(${W - m.r},0)`)
+    .call(d3.axisRight(yT).tickValues(tt).tickSize(0).tickPadding(6).tickFormat((t) => t + ' °C'))
+    .call((g) => g.select('.domain').remove());
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickFormat((mo) => kw.monthShort(mo)).tickSizeOuter(0));
+  svg.append('g').selectAll('rect').data(rows).join('rect')
+    .attr('x', (d) => x(d.month)).attr('width', x.bandwidth())
+    .attr('y', (d) => yR(d.rain || 0)).attr('height', (d) => yR(0) - yR(d.rain || 0)).attr('rx', 2)
+    .style('fill', dash.colors[0]).style('opacity', (d) => (d.partial ? 0.4 : 1));
+  const cx = (d) => x(d.month) + x.bandwidth() / 2;
+  const lineHi = d3.line().defined((d) => d.hi !== null).x(cx).y((d) => yT(d.hi));
+  const lineLo = d3.line().defined((d) => d.lo !== null).x(cx).y((d) => yT(d.lo));
+  svg.append('path').datum(rows).attr('d', lineHi).style('fill', 'none').style('stroke', dash.colors[1]).style('stroke-width', 2.5);
+  svg.append('path').datum(rows).attr('d', lineLo).style('fill', 'none').style('stroke', dash.colors[1]).style('stroke-width', 2).style('stroke-dasharray', '5 4');
+  svg.append('g').selectAll('circle').data(rows.filter((d) => d.hi !== null)).join('circle').attr('r', 3.5).attr('cx', cx).attr('cy', (d) => yT(d.hi)).style('fill', dash.colors[1]);
+  svg.append('g').selectAll('circle').data(rows.filter((d) => d.lo !== null)).join('circle').attr('r', 3).attr('cx', cx).attr('cy', (d) => yT(d.lo)).style('fill', 'var(--color-bg)').style('stroke', dash.colors[1]).style('stroke-width', 1.5);
+  const tip = kw.tooltip(el);
+  svg.append('g').selectAll('rect').data(rows).join('rect')
+    .attr('x', (d) => x(d.month) - (x.step() - x.bandwidth()) / 2).attr('width', x.step()).attr('y', 0).attr('height', H - m.b)
+    .style('fill', 'transparent')
+    .on('pointerenter', (ev, d) => {
+      const scale = el.clientWidth / W;
+      tip.show(kw.monthName(d.month) + (d.partial ? ' (part month)' : ''), [
+        `Rain ${d.rain === null ? '—' : kw.f0(d.rain)} mm`,
+        `Average high ${d.hi === null ? '—' : kw.f1(d.hi)} °C`,
+        `Average low ${d.lo === null ? '—' : kw.f1(d.lo)} °C`,
+        `Humidity ${d.rh === null ? '—' : kw.f0(d.rh)}%`
+      ], cx(d) * scale, yT(d.hi || 0) * scale);
+    })
+    .on('pointerleave', () => tip.hide());
+});
+
+/* Dumbbell: daily low to high by rain category */
+dash.draw('rain-bands', (el) => {
+  const r = dash.data('rain_bands');
+  if (r.status !== 'ok' || !r.data) return kw.placeholder(el, r.status === 'ok' ? 'loading' : r.status, true);
+  el.classList.remove('dash-skeleton');
+  el.replaceChildren();
+  const rows = r.data.filter((d) => d.tmax_median !== null);
+  if (!rows.length) return;
+  const W = Math.max(280, el.clientWidth || 600);
+  const rh = 46;
+  const svg = d3.select(el).append('svg').attr('width', '100%')
+    .attr('role', 'img').attr('aria-label', 'Median daily low and high temperature on dry, light, moderate and heavy rain days, June to September 2026');
+  const lw = kw.measure(svg, rows.flatMap((d) => [d.band, d.range]));
+  const nw = kw.measure(svg, rows.map((d) => kw.f0(d.days) + ' days'));
+  const m = { t: 6, r: Math.ceil(nw) + 14, b: 24, l: Math.ceil(lw) + 14 };
+  const H = m.t + rows.length * rh + m.b;
+  svg.attr('viewBox', `0 0 ${W} ${H}`);
+  const all = rows.flatMap((d) => [d.tmin_median, d.tmax_median]);
+  const x = d3.scaleLinear().domain([Math.floor(d3.min(all)) - 1, Math.ceil(d3.max(all)) + 1]).range([m.l, W - m.r]);
+  const xt = x.ticks(W < 420 ? 4 : 6);
+  svg.append('g').attr('class', 'kw-grid').attr('transform', `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues(xt).tickSize(-(H - m.b - m.t)).tickFormat(''));
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(0,${H - m.b})`)
+    .call(d3.axisBottom(x).tickValues(xt).tickSize(0).tickPadding(6).tickFormat((t) => t + ' °C'))
+    .call((g) => g.select('.domain').remove());
+  const g = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (d, i) => `translate(0,${m.t + i * rh})`);
+  g.append('text').attr('class', 'kw-val').attr('x', m.l - 10).attr('y', rh / 2 - 7).attr('dy', '0.35em').attr('text-anchor', 'end').text((d) => d.band);
+  g.append('text').attr('class', 'kw-lbl').attr('x', m.l - 10).attr('y', rh / 2 + 8).attr('dy', '0.35em').attr('text-anchor', 'end').text((d) => d.range);
+  g.append('line').attr('x1', (d) => x(d.tmin_median)).attr('x2', (d) => x(d.tmax_median)).attr('y1', rh / 2).attr('y2', rh / 2)
+    .style('stroke', dash.colors[1]).style('stroke-width', 6).style('stroke-linecap', 'round').style('opacity', 0.35);
+  g.append('circle').attr('cx', (d) => x(d.tmin_median)).attr('cy', rh / 2).attr('r', 5)
+    .style('fill', 'var(--color-bg)').style('stroke', dash.colors[1]).style('stroke-width', 2);
+  g.append('circle').attr('cx', (d) => x(d.tmax_median)).attr('cy', rh / 2).attr('r', 6).style('fill', dash.colors[1]);
+  g.append('text').attr('class', 'kw-val').attr('x', (d) => x(d.tmax_median)).attr('y', rh / 2 - 12).attr('text-anchor', 'middle').text((d) => kw.f1(d.tmax_median));
+  g.append('text').attr('class', 'kw-lbl').attr('x', (d) => x(d.tmin_median)).attr('y', rh / 2 - 12).attr('text-anchor', 'middle').text((d) => kw.f1(d.tmin_median));
+  g.append('text').attr('class', 'kw-lbl').attr('x', W - m.r + 10).attr('y', rh / 2).attr('dy', '0.35em').text((d) => kw.f0(d.days) + ' days');
+  const tip = kw.tooltip(el);
+  g.append('rect').attr('x', 0).attr('y', 0).attr('width', W).attr('height', rh).style('fill', 'transparent')
+    .on('pointerenter', (ev, d) => {
+      const i = rows.indexOf(d);
+      const scale = el.clientWidth / W;
+      tip.show(`${d.band} days (${d.range})`, [
+        `Median high ${kw.f1(d.tmax_median)} °C`,
+        `Median low ${kw.f1(d.tmin_median)} °C`,
+        `Median humidity ${kw.f0(d.rh_median)}%`,
+        `${kw.f0(d.days)} station-days`
+      ], x(d.tmax_median) * scale, (m.t + i * rh) * scale);
+    })
+    .on('pointerleave', () => tip.hide());
+});
+
+/* Rain onset composite: temperature change above, rain below */
+dash.draw('onset', (el) => {
+  const r = dash.data('rain_onset');
+  if (r.status !== 'ok') return kw.placeholder(el, r.status, true);
+  el.classList.remove('dash-skeleton');
+  el.replaceChildren();
+  const rows = r.data.map((d) => ({ min: +d.minute, day: kw.num(d.temp_change_day_c), other: kw.num(d.temp_change_other_c), all: kw.num(d.temp_change_c), rh: kw.num(d.rh_change_pct), rain: kw.num(d.rain_mm_per_5min) }));
+  if (!rows.length) return;
+  const W = Math.max(280, el.clientWidth || 600);
+  const H1 = 210, gap = 14, H2 = 70, B = 26;
+  const H = H1 + gap + H2 + B;
+  const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('role', 'img').attr('aria-label', 'Median temperature change from one hour before to three hours after rain starts, with average rain below');
+  const vals = rows.flatMap((d) => [d.day, d.other]).filter((v) => !isNaN(v));
+  const yT = d3.scaleLinear().domain([Math.floor(d3.min(vals)) - 0.5, Math.max(1, Math.ceil(d3.max(vals)))]).nice().range([H1, 8]);
+  const yR = d3.scaleLinear().domain([0, d3.max(rows, (d) => d.rain) || 1]).nice().range([H1 + gap + H2, H1 + gap + 6]);
+  const tt = yT.ticks(5), rt = yR.ticks(2);
+  const lw = Math.max(kw.measure(svg, tt.map((t) => (t > 0 ? '+' : '') + t + ' °C')), kw.measure(svg, rt.map((t) => t + ' mm')));
+  const m = { l: Math.ceil(lw) + 8, r: 10 };
+  const step = 5;
+  const x = d3.scaleLinear().domain([d3.min(rows, (d) => d.min), d3.max(rows, (d) => d.min) + step]).range([m.l, W - m.r]);
+  const cx = (d) => x(d.min + step / 2);
+  svg.append('g').attr('class', 'kw-grid').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(yT).tickValues(tt).tickSize(-(W - m.l - m.r)).tickFormat(''));
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(yT).tickValues(tt).tickSize(0).tickPadding(6).tickFormat((t) => (t > 0 ? '+' : '') + t + ' °C'))
+    .call((g) => g.select('.domain').remove());
+  svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yT(0)).attr('y2', yT(0)).style('stroke', 'var(--cds-chart-reference)').style('stroke-width', 1);
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(${m.l},0)`)
+    .call(d3.axisLeft(yR).tickValues(rt).tickSize(0).tickPadding(6).tickFormat((t) => t + ' mm'))
+    .call((g) => g.select('.domain').remove());
+  svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', yR(0)).attr('y2', yR(0)).style('stroke', 'var(--cds-chart-axis)');
+  const xt = d3.range(-60, 181, W < 420 ? 60 : 30);
+  svg.append('g').attr('class', 'kw-axis').attr('transform', `translate(0,${H1 + gap + H2})`)
+    .call(d3.axisBottom(x).tickValues(xt).tickSize(4).tickFormat((t) => (t === 0 ? 'Rain starts' : (t > 0 ? '+' : '') + t + ' min')))
+    .call((g) => g.select('.domain').remove());
+  svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', 4).attr('y2', H1 + gap + H2)
+    .style('stroke', 'var(--cds-chart-reference)').style('stroke-dasharray', '3 3');
+  const bw = Math.max(1, x(step) - x(0) - 1);
+  svg.append('g').selectAll('rect').data(rows).join('rect')
+    .attr('x', (d) => x(d.min) + 0.5).attr('width', bw)
+    .attr('y', (d) => yR(isNaN(d.rain) ? 0 : d.rain)).attr('height', (d) => yR(0) - yR(isNaN(d.rain) ? 0 : d.rain))
+    .style('fill', dash.colors[0]);
+  const other = dash.colors[3] || dash.colors[2];
+  svg.append('path').datum(rows).attr('d', d3.line().defined((d) => !isNaN(d.other)).x(cx).y((d) => yT(d.other)))
+    .style('fill', 'none').style('stroke', other).style('stroke-width', 2);
+  svg.append('path').datum(rows).attr('d', d3.line().defined((d) => !isNaN(d.day)).x(cx).y((d) => yT(d.day)))
+    .style('fill', 'none').style('stroke', dash.colors[1]).style('stroke-width', 2.5);
+  const hl = svg.append('line').attr('y1', 4).attr('y2', H1 + gap + H2).style('stroke', 'var(--color-fg-muted)').attr('visibility', 'hidden');
+  const tip = kw.tooltip(el);
+  svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', W - m.l - m.r).attr('height', H1 + gap + H2).style('fill', 'transparent')
+    .on('pointermove', (ev) => {
+      const [px, py] = d3.pointer(ev);
+      const v = x.invert(px);
+      const d = rows.reduce((a, b) => (Math.abs(b.min + step / 2 - v) < Math.abs(a.min + step / 2 - v) ? b : a));
+      hl.attr('x1', cx(d)).attr('x2', cx(d)).attr('visibility', 'visible');
+      const scale = el.clientWidth / W;
+      const sgn = (n) => (isNaN(n) ? '—' : (n > 0 ? '+' : '') + kw.f1(n));
+      const when = d.min === 0 ? 'First 5 minutes of rain' : d.min < 0 ? `${-d.min} min before rain` : `${d.min} min after rain starts`;
+      tip.show(when, [
+        `Daytime showers: ${sgn(d.day)} °C`,
+        `Other showers: ${sgn(d.other)} °C`,
+        `Humidity: ${sgn(d.rh)} points`,
+        `Rain: ${kw.f1(d.rain)} mm per 5 min`
+      ], cx(d) * scale, py * scale);
+    })
+    .on('pointerleave', () => { hl.attr('visibility', 'hidden'); tip.hide(); });
+});
+</script>
+
+</main>
+<script>
+(function () {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var orbs = [].slice.call(document.querySelectorAll('#bg-field .orb'));
+  var tx = 0, ty = 0, cx = 0, cy = 0, raf;
+  window.addEventListener('mousemove', function (e) {
+    tx = (e.clientX / window.innerWidth) - 0.5;
+    ty = (e.clientY / window.innerHeight) - 0.5;
+    if (!raf) raf = requestAnimationFrame(loop);
+  }, { passive: true });
+  function loop() {
+    cx += (tx - cx) * 0.06; cy += (ty - cy) * 0.06;
+    orbs.forEach(function (o, i) {
+      var d = i === 1 ? 22 : 14;
+      o.style.transform = 'translate(' + (-cx * d) + 'px,' + (-cy * d) + 'px)';
+    });
+    if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) raf = requestAnimationFrame(loop);
+    else raf = null;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+station,month,rain_mm,full_days,rainy_days,in_ranking
+Baghajatin Colony,2026-05,45.0,0,0,no
+Baghajatin Colony,2026-06,392.0,17,9,no
+Baghajatin Colony,2026-07,429.0,31,20,no
+Baghajatin Colony,2026-08,263.6,26,14,no
+Baghajatin Colony,2026-09,253.2,29,11,no
+Baghajatin Colony,2026-10,62.4,24,3,no
+Baghajatin Colony,2026-11,14.8,6,1,no
+Baguihati,2026-07,0.0,0,0,no
+Baguihati,2026-08,2.0,0,0,no
+Ballygunge,2026-05,79.8,23,3,no
+Ballygunge,2026-06,454.6,30,12,no
+Ballygunge,2026-07,406.8,31,21,no
+Ballygunge,2026-08,485.6,21,13,no
+Ballygunge,2026-09,332.8,20,11,no
+Ballygunge,2026-10,125.6,23,8,no
+Ballygunge,2026-11,3.4,8,1,no
+Bansdroni,2026-05,80.8,23,4,no
+Bansdroni,2026-06,243.8,30,12,no
+Bansdroni,2026-07,239.2,17,13,no
+Barabazar Market,2026-05,0.6,0,0,no
+Barabazar Market,2026-06,2.0,0,0,no
+Barabazar Market,2026-07,18.0,0,0,no
+Barabazar Market,2026-08,12.4,0,0,no
+Barabazar Market,2026-09,11.2,0,0,no
+Barabazar Market,2026-10,2.2,0,0,no
+Barabazar Market,2026-11,0.4,0,0,no
+Baranagar,2026-06,324.2,20,8,no
+Baranagar,2026-07,61.2,4,3,no
+Baranagar,2026-08,354.4,31,18,no
+Baranagar,2026-09,194.2,10,5,no
+Baranagar,2026-10,17.0,4,2,no
+Baranagar,2026-11,2.0,8,0,no
+Barasat,2026-05,59.4,23,2,yes
+Barasat,2026-06,303.2,27,11,yes
+Barasat,2026-07,397.4,26,16,yes
+Barasat,2026-08,390.6,31,21,yes
+Barasat,2026-09,316.6,30,14,yes
+Barasat,2026-10,112.6,31,5,yes
+Barasat,2026-11,1.8,8,0,yes
+Barrackpore,2026-05,47.4,23,2,yes
+Barrackpore,2026-06,381.6,30,11,yes
+Barrackpore,2026-07,328.8,31,19,yes
+Barrackpore,2026-08,357.2,31,18,yes
+Barrackpore,2026-09,443.6,30,17,yes
+Barrackpore,2026-10,60.6,31,4,yes
+Barrackpore,2026-11,1.2,4,0,yes
+Behala,2026-05,23.2,23,3,yes
+Behala,2026-06,37.2,30,3,yes
+Behala,2026-07,108.2,31,8,yes
+Behala,2026-08,311.0,31,21,yes
+Behala,2026-09,193.6,30,13,yes
+Behala,2026-10,18.6,31,2,yes
+Behala,2026-11,0.0,8,0,yes
+Bhowanipore,2026-05,58.2,23,3,yes
+Bhowanipore,2026-06,328.6,30,11,yes
+Bhowanipore,2026-07,343.8,31,22,yes
+Bhowanipore,2026-08,484.4,31,20,yes
+Bhowanipore,2026-09,499.0,30,17,yes
+Bhowanipore,2026-10,96.0,31,7,yes
+Bhowanipore,2026-11,3.4,8,1,yes
+Bow Barracks,2026-05,63.4,23,3,yes
+Bow Barracks,2026-06,351.4,30,11,yes
+Bow Barracks,2026-07,462.0,31,19,yes
+Bow Barracks,2026-08,477.2,31,17,yes
+Bow Barracks,2026-09,491.8,30,16,yes
+Bow Barracks,2026-10,112.4,31,9,yes
+Bow Barracks,2026-11,2.4,8,0,yes
+Chandannagar,2026-05,0.6,23,0,no
+Chandannagar,2026-06,0.2,30,0,no
+Chandannagar,2026-07,18.4,31,2,no
+Chandannagar,2026-08,26.4,31,3,no
+Chandannagar,2026-09,55.0,30,3,no
+Chandannagar,2026-10,23.6,31,2,no
+Chandannagar,2026-11,0.4,8,0,no
+Chhota Jagulia,2026-05,25.4,23,4,yes
+Chhota Jagulia,2026-06,64.4,29,4,yes
+Chhota Jagulia,2026-07,54.6,31,6,yes
+Chhota Jagulia,2026-08,317.4,31,15,yes
+Chhota Jagulia,2026-09,270.2,30,15,yes
+Chhota Jagulia,2026-10,108.2,31,6,yes
+Chhota Jagulia,2026-11,0.8,8,0,yes
+Chinsurah,2026-05,33.8,23,1,no
+Chinsurah,2026-06,238.6,22,9,no
+Chinsurah,2026-07,372.4,31,21,no
+Chinsurah,2026-08,398.2,31,17,no
+Chinsurah,2026-09,246.0,29,14,no
+Chinsurah,2026-10,74.8,12,4,no
+Chinsurah,2026-11,0.0,0,0,no
+Dum Dum,2026-05,36.8,23,2,yes
+Dum Dum,2026-06,307.2,30,13,yes
+Dum Dum,2026-07,459.2,26,17,yes
+Dum Dum,2026-08,365.6,31,20,yes
+Dum Dum,2026-09,308.2,30,17,yes
+Dum Dum,2026-10,82.2,31,7,yes
+Dum Dum,2026-11,11.4,8,1,yes
+East Kolkata Township,2026-06,298.2,25,10,no
+East Kolkata Township,2026-07,300.0,14,8,no
+East Kolkata Township,2026-08,127.0,2,1,no
+East Kolkata Township,2026-09,136.2,0,0,no
+Elgin,2026-06,292.6,28,11,no
+Elgin,2026-07,329.2,31,22,no
+Elgin,2026-08,341.8,31,19,no
+Elgin,2026-09,417.2,30,17,no
+Elgin,2026-10,94.4,31,8,no
+Elgin,2026-11,2.4,8,0,no
+Garia,2026-05,114.2,23,4,yes
+Garia,2026-06,323.8,30,12,yes
+Garia,2026-07,403.8,31,20,yes
+Garia,2026-08,369.0,31,17,yes
+Garia,2026-09,449.6,30,14,yes
+Garia,2026-10,97.8,31,6,yes
+Garia,2026-11,15.6,8,1,yes
+Gariahat,2026-05,79.2,23,4,no
+Gariahat,2026-06,317.0,30,10,no
+Gariahat,2026-07,297.6,31,20,no
+Gariahat,2026-08,115.0,27,9,no
+Howrah,2026-05,61.4,23,4,no
+Howrah,2026-06,1080.2,30,24,no
+Howrah,2026-07,123.8,31,7,no
+Howrah,2026-08,23.2,29,1,no
+Howrah,2026-09,110.6,19,4,no
+Howrah,2026-10,49.6,31,4,no
+Howrah,2026-11,0.2,8,0,no
+Jadavpur,2026-05,59.8,23,3,yes
+Jadavpur,2026-06,416.0,30,14,yes
+Jadavpur,2026-07,487.6,31,20,yes
+Jadavpur,2026-08,526.6,31,20,yes
+Jadavpur,2026-09,517.4,30,16,yes
+Jadavpur,2026-10,188.0,31,9,yes
+Jadavpur,2026-11,3.4,8,1,yes
+Kalyani 1,2026-05,42.0,23,5,yes
+Kalyani 1,2026-06,161.2,30,9,yes
+Kalyani 1,2026-07,129.2,31,12,yes
+Kalyani 1,2026-08,360.2,31,21,yes
+Kalyani 1,2026-09,325.2,30,14,yes
+Kalyani 1,2026-10,49.2,31,3,yes
+Kalyani 1,2026-11,0.0,8,0,yes
+Kankurgachi,2026-05,34.8,23,3,yes
+Kankurgachi,2026-06,280.8,30,11,yes
+Kankurgachi,2026-07,256.0,31,15,yes
+Kankurgachi,2026-08,337.2,31,16,yes
+Kankurgachi,2026-09,259.6,30,14,yes
+Kankurgachi,2026-10,59.6,31,7,yes
+Kankurgachi,2026-11,2.0,8,0,yes
+Kasba,2026-05,80.2,23,2,yes
+Kasba,2026-06,346.4,29,11,yes
+Kasba,2026-07,309.0,31,17,yes
+Kasba,2026-08,508.4,31,20,yes
+Kasba,2026-09,513.8,30,17,yes
+Kasba,2026-10,55.6,31,4,yes
+Kasba,2026-11,11.6,8,1,yes
+Kestopur,2026-05,69.8,23,4,no
+Kestopur,2026-06,560.0,30,13,no
+Kestopur,2026-07,246.6,13,8,no
+Kestopur,2026-08,50.0,0,0,no
+Kestopur,2026-09,79.0,0,0,no
+Kestopur,2026-10,2.2,0,0,no
+Liluah,2026-05,67.0,23,3,yes
+Liluah,2026-06,153.8,30,4,yes
+Liluah,2026-07,161.4,31,9,yes
+Liluah,2026-08,453.8,31,16,yes
+Liluah,2026-09,293.0,30,14,yes
+Liluah,2026-10,23.6,28,4,yes
+Liluah,2026-11,2.4,8,0,yes
+New Alipore,2026-05,38.2,23,2,yes
+New Alipore,2026-06,137.4,21,6,yes
+New Alipore,2026-07,336.0,31,19,yes
+New Alipore,2026-08,235.6,31,9,yes
+New Alipore,2026-09,138.0,30,4,yes
+New Alipore,2026-10,0.0,31,0,yes
+New Alipore,2026-11,0.0,8,0,yes
+New Town,2026-05,72.0,23,5,no
+New Town,2026-06,191.0,30,13,no
+New Town,2026-07,253.8,31,19,no
+New Town,2026-08,325.4,31,15,no
+New Town,2026-09,217.6,30,13,no
+New Town,2026-10,104.2,7,3,no
+New Town,2026-11,5.0,0,0,no
+Nimta,2026-05,47.0,23,3,yes
+Nimta,2026-06,342.6,30,12,yes
+Nimta,2026-07,351.8,31,25,yes
+Nimta,2026-08,231.2,31,19,yes
+Nimta,2026-09,104.6,30,13,yes
+Nimta,2026-10,45.2,31,6,yes
+Nimta,2026-11,1.8,8,0,yes
+Park Street area,2026-05,73.6,23,3,yes
+Park Street area,2026-06,424.2,30,12,yes
+Park Street area,2026-07,432.4,31,20,yes
+Park Street area,2026-08,464.8,31,20,yes
+Park Street area,2026-09,495.6,30,17,yes
+Park Street area,2026-10,115.8,31,7,yes
+Park Street area,2026-11,2.8,8,1,yes
+Purbabarisha,2026-06,156.2,16,7,no
+Purbabarisha,2026-07,403.0,31,21,no
+Purbabarisha,2026-08,295.4,31,18,no
+Purbabarisha,2026-09,448.2,30,18,no
+Purbabarisha,2026-10,62.8,31,2,no
+Purbabarisha,2026-11,0.8,8,0,no
+Rajarhat,2026-05,11.0,16,1,no
+Rajarhat,2026-06,458.4,26,13,no
+Rajarhat,2026-07,526.2,31,23,no
+Rajarhat,2026-08,339.0,29,18,no
+Rajarhat,2026-09,416.8,30,14,no
+Rajarhat,2026-10,121.2,23,8,no
+Salt Lake 1,2026-05,0.0,0,0,no
+Salt Lake 1,2026-06,0.0,0,0,no
+Salt Lake 1,2026-07,0.0,0,0,no
+Salt Lake 1,2026-08,0.0,0,0,no
+Salt Lake 1,2026-09,4.0,0,0,no
+Salt Lake 2,2026-05,68.8,21,3,yes
+Salt Lake 2,2026-06,309.8,20,12,yes
+Salt Lake 2,2026-07,220.8,31,21,yes
+Salt Lake 2,2026-08,317.2,31,18,yes
+Salt Lake 2,2026-09,345.8,30,16,yes
+Salt Lake 2,2026-10,121.2,31,9,yes
+Salt Lake 2,2026-11,3.8,8,1,yes
+Santoshpur,2026-06,233.2,15,7,no
+Santoshpur,2026-07,538.8,31,20,no
+Santoshpur,2026-08,435.4,31,20,no
+Santoshpur,2026-09,459.6,30,17,no
+Santoshpur,2026-10,78.0,31,4,no
+Santoshpur,2026-11,2.4,8,0,no
+Santragachi,2026-05,25.0,23,2,no
+Santragachi,2026-06,231.6,19,7,no
+Santragachi,2026-07,261.6,31,18,no
+Santragachi,2026-08,364.2,31,15,no
+Santragachi,2026-09,199.4,20,9,no
+Santragachi,2026-10,132.8,9,2,no
+Santragachi,2026-11,3.6,3,0,no
+Shapoorji,2026-05,108.2,22,4,no
+Shapoorji,2026-06,115.8,6,2,no
+Shapoorji,2026-07,63.6,7,6,no
+Shapoorji,2026-08,324.6,31,19,no
+Shapoorji,2026-09,335.6,30,15,no
+Shapoorji,2026-10,110.2,31,10,no
+Shapoorji,2026-11,21.2,8,2,no
+Shibpur,2026-06,41.4,1,1,no
+Shibpur,2026-07,380.6,31,20,no
+Shibpur,2026-08,192.8,29,8,no
+Shibpur,2026-09,184.2,30,13,no
+Shibpur,2026-10,40.6,31,5,no
+Shibpur,2026-11,0.8,8,0,no
+Shrirampur,2026-05,58.4,23,4,yes
+Shrirampur,2026-06,337.8,30,11,yes
+Shrirampur,2026-07,308.4,31,21,yes
+Shrirampur,2026-08,314.6,31,19,yes
+Shrirampur,2026-09,357.8,30,16,yes
+Shrirampur,2026-10,40.0,31,4,yes
+Shrirampur,2026-11,2.2,8,0,yes
+Shyam Bazar,2026-05,63.0,11,2,no
+Shyam Bazar,2026-06,433.8,13,6,no
+Shyam Bazar,2026-07,226.6,12,7,no
+Shyam Bazar,2026-10,12.6,2,0,no
+Shyam Bazar,2026-11,3.4,6,0,no
+Sodepur,2026-05,55.8,23,3,yes
+Sodepur,2026-06,361.0,29,10,yes
+Sodepur,2026-07,341.4,30,19,yes
+Sodepur,2026-08,296.8,31,18,yes
+Sodepur,2026-09,435.6,30,18,yes
+Sodepur,2026-10,102.6,31,7,yes
+Sodepur,2026-11,2.2,8,0,yes
+Sonarpur,2026-05,88.0,23,4,yes
+Sonarpur,2026-06,308.2,30,13,yes
+Sonarpur,2026-07,393.2,31,19,yes
+Sonarpur,2026-08,303.2,31,16,yes
+Sonarpur,2026-09,383.6,30,14,yes
+Sonarpur,2026-10,77.8,31,5,yes
+Sonarpur,2026-11,17.4,8,1,yes
+South Dum Dum,2026-05,69.4,23,5,yes
+South Dum Dum,2026-06,571.6,30,14,yes
+South Dum Dum,2026-07,418.8,31,22,yes
+South Dum Dum,2026-08,484.4,31,17,yes
+South Dum Dum,2026-09,429.6,30,17,yes
+South Dum Dum,2026-10,114.4,29,6,yes
+South Dum Dum,2026-11,3.6,8,0,yes
+Tangra,2026-05,34.2,15,2,yes
+Tangra,2026-06,84.4,24,3,yes
+Tangra,2026-07,148.4,31,12,yes
+Tangra,2026-08,385.4,31,20,yes
+Tangra,2026-09,387.4,30,17,yes
+Tangra,2026-10,99.0,31,7,yes
+Tangra,2026-11,5.0,8,1,yes
+Tollygunge,2026-05,16.0,11,1,no
+Tollygunge,2026-06,51.6,12,2,no
+Tollygunge,2026-07,0.6,0,0,no
+Uttarpara,2026-08,11.6,0,0,no
