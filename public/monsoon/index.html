@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#0a0203" />
+<meta name="theme-color" content="#ffffff" />
 <meta name="description" content="Rain, temperature and humidity from Weather Union stations across Kolkata, 9 May to 8 Nov 2026." />
 <title>Kolkata Monsoon Weather 2026 — Kolkata Civic Data</title>
 <style>
 :root {
-  --ink:#f5e9e8; --accent:#e54b4a;
-  --glass:rgba(28,8,9,0.5); --glass-line:rgba(255,100,100,0.2);
-  --blur:blur(20px) saturate(135%);
-  --color-fg:#f5e9e8; --color-fg-muted:rgba(245,220,218,0.66); --color-bg:#0a0203;
-  --color-panel:rgba(28,8,9,0.55); --color-border-line:rgba(255,100,100,0.2);
-  --color-ok:#5fc88f; --color-warn:#f2b84b; --color-bad:#e54b4a;
+  --ink:#111111; --accent:#111111;
+  --glass:#ffffff; --glass-line:#e6e6e6;
+  --blur:none;
+  --color-fg:#111111; --color-fg-muted:#555555; --color-bg:#ffffff;
+  --color-panel:#fafafa; --color-border-line:#e6e6e6;
+  --color-ok:#15803d; --color-warn:#b45309; --color-bad:#b91c1c;
   --font-anthropic-sans:-apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-anthropic-serif:-apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --cds-font-size-caption:12px; --cds-font-size-body:14px; --cds-font-size-heading:17px; --cds-font-size-title:20px;
@@ -21,42 +21,43 @@
   --cds-gap-xs:4px; --cds-gap-sm:8px; --cds-gap-md:12px; --cds-gap-lg:20px; --cds-gap-xl:36px;
   --cds-pad-xs:4px; --cds-pad-sm:8px; --cds-pad-md:12px; --cds-pad-lg:16px; --cds-pad-xl:24px;
   --cds-radius:10px;
-  --cds-chart-muted:rgba(245,220,218,0.22); --cds-chart-grid:rgba(255,255,255,0.07);
-  --cds-chart-axis:rgba(255,255,255,0.2); --cds-chart-reference:rgba(255,255,255,0.4);
-  --cds-text-secondary:rgba(245,215,212,0.62);
-  --cds-surface-popover:rgba(20,6,7,0.96); --cds-border:rgba(255,110,105,0.36); --cds-shadow-popover:0 10px 30px rgba(0,0,0,.6);
-  color-scheme: dark;
+  --cds-chart-muted:rgba(0,0,0,0.14); --cds-chart-grid:rgba(0,0,0,0.07);
+  --cds-chart-axis:rgba(0,0,0,0.25); --cds-chart-reference:rgba(0,0,0,0.45);
+  --cds-text-secondary:#666666;
+  --cds-surface-popover:#ffffff; --cds-border:#d9d9d9; --cds-shadow-popover:0 8px 24px rgba(0,0,0,.12);
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
-html, body { background:#060102; }
+html, body { background:#ffffff; }
 body { margin:0; font-family:var(--font-anthropic-sans); color:var(--ink); font-size:14px; }
 #bg-field { position:fixed; inset:-8%; z-index:0; overflow:hidden; pointer-events:none;
-  background:radial-gradient(circle at 28% 10%, #2a0608 0%, #120203 46%, #060102 100%); }
+  background:#ffffff; }
+#bg-field .orb { display:none !important; }
 #bg-field .orb { position:absolute; border-radius:50%; filter:blur(44px); will-change:transform; }
 #bg-field .orb-1 { top:-10%; left:-6%; width:46vw; height:46vw; background:radial-gradient(circle,rgba(229,75,74,0.4),transparent 66%); }
 #bg-field .orb-2 { bottom:-14%; right:-8%; width:42vw; height:42vw; background:radial-gradient(circle,rgba(163,45,45,0.38),transparent 66%); }
 body > *:not(#bg-field) { position:relative; z-index:1; }
-.site-nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; background:rgba(12,3,4,0.6); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); padding:0 24px; border-bottom:1px solid var(--glass-line); }
-.site-nav .brand { color:#fff; font-weight:700; font-size:14px; padding:16px 14px 16px 0; margin-right:8px; letter-spacing:.2px; }
-.site-nav a { font-size:14px; font-weight:500; padding:16px 14px; text-decoration:none; color:rgba(245,220,218,0.66); border-bottom:2px solid transparent; }
+.site-nav { display:flex; align-items:center; gap:4px; flex-wrap:wrap; background:rgba(255,255,255,0.95); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); padding:0 24px; border-bottom:1px solid var(--glass-line); }
+.site-nav .brand { color:#0a0a0a; font-weight:700; font-size:14px; padding:16px 14px 16px 0; margin-right:8px; letter-spacing:.2px; }
+.site-nav a { font-size:14px; font-weight:500; padding:16px 14px; text-decoration:none; color:#555555; border-bottom:2px solid transparent; }
 .site-nav a:hover { color:var(--ink); }
-.site-nav a.active { color:#fff; border-bottom-color:var(--accent); }
+.site-nav a.active { color:#0a0a0a; border-bottom-color:#0a0a0a; }
 .page { max-width:1040px; margin:0 auto; padding-block:32px 64px; padding-left:max(20px, env(safe-area-inset-left, 0px)); padding-right:max(20px, env(safe-area-inset-right, 0px)); }
-.kw .kw-title { font-weight:700; color:#fff; }
+.kw .kw-title { font-weight:700; color:#0a0a0a; }
 .kw .kw-tile { backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
-.kw .kw-tile-value { font-weight:700; color:#fff; }
-.kw-sec h2 { color:#fff; }
-.kw-lede b { color:#ff8a85; }
-.kw-note b { color:#ff8a85; }
-.kw-tablewrap { background:rgba(20,6,7,0.45); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
+.kw .kw-tile-value { font-weight:700; color:#0a0a0a; }
+.kw-sec h2 { color:#0a0a0a; }
+.kw-lede b { color:#0a0a0a; }
+.kw-note b { color:#0a0a0a; }
+.kw-tablewrap { background:#ffffff; backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
 .kw-data { display:flex; flex-direction:column; gap:var(--cds-gap-sm); }
 .kw-data ul { margin:0; padding-left:1.2rem; display:flex; flex-direction:column; gap:4px; color:var(--color-fg-muted); }
-.kw-data a { color:#ff8a85; }
+.kw-data a { color:#0a0a0a; text-decoration:underline; }
 .kw-byline { margin:0; font-size:13px; color:var(--color-fg-muted); letter-spacing:.02em; }
 .kw-footer { margin-top:var(--cds-gap-xl); padding-top:var(--cds-pad-lg); border-top:1px solid var(--color-border-line); font-size:13px; color:var(--color-fg-muted); }
 .kw-footer strong { color:var(--ink); font-weight:600; }
 .dash-skeleton { position:relative; color:transparent !important; }
-.dash-skeleton::after { content:""; position:absolute; inset:0; border-radius:6px; background:rgba(255,255,255,0.06); }
+.dash-skeleton::after { content:""; position:absolute; inset:0; border-radius:6px; background:rgba(0,0,0,0.05); }
 a:focus-visible, summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -81,7 +82,7 @@ a:focus-visible, summary:focus-visible { outline:2px solid var(--accent); outlin
     return calcVals[id];
   }
   const dash = {
-    colors: ['#5aa9e6', '#ff6b5e', '#b49cf5', '#f2b84b', '#5fc88f'],
+    colors: ['#2f7fc1', '#d9412e', '#7c5cd6', '#c98a00', '#2e9e5b'],
     data(id) {
       if (status !== 'ok') return { status, data: id in files ? [] : null };
       if (!(id in files) && !(id in calcs)) return { status: 'missing', data: [] };

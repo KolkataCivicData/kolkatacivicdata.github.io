@@ -43,7 +43,7 @@
       if (!el || document.getElementById(id+'-lbl')) return;
       var l = document.createElement('label');
       l.id = id+'-lbl'; l.htmlFor = id; l.textContent = text;
-      l.style.cssText = 'display:block;font-size:11px;font-weight:600;color:rgba(245,220,218,0.7);margin-bottom:2px;';
+      l.style.cssText = 'display:block;font-size:11px;font-weight:600;color:#444444;margin-bottom:2px;';
       el.parentNode.insertBefore(l, el);
       el.setAttribute('aria-label', text);
     }
@@ -70,7 +70,7 @@
           if (!active){
             swatches.forEach(function(s){ if (s !== sw) s.style.opacity = '0.3'; });
             sw.dataset.active = '1';
-            sw.style.boxShadow = '0 0 0 2px #ff8a85';
+            sw.style.boxShadow = '0 0 0 2px #111111';
           }
         }
         sw.addEventListener('click', toggle);
@@ -87,7 +87,7 @@
       var obs = new MutationObserver(function(){
         if (/outside area/.test(readoutEl.textContent) && !readoutEl.dataset.fixed){
           readoutEl.dataset.fixed = '1';
-          readoutEl.innerHTML = '<span style="color:rgba(245,210,208,0.6)">No reading here - move over the colored area</span>';
+          readoutEl.innerHTML = '<span style="color:#777777">No reading here - move over the colored area</span>';
           setTimeout(function(){ readoutEl.dataset.fixed = ''; }, 50);
         }
       });
@@ -98,7 +98,7 @@
     var ld = document.createElement('div');
     ld.id = 'lst-loading';
     ld.innerHTML = '<span style="display:inline-block;width:12px;height:12px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:lstspin .8s linear infinite;vertical-align:middle;margin-right:6px"></span>Loading temperature tiles...';
-    ld.style.cssText = 'position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(15,23,42,.85);color:#fff;font-size:12px;padding:6px 12px;border-radius:16px;display:none;';
+    ld.style.cssText = 'position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(0,0,0,.8);color:#fff;font-size:12px;padding:6px 12px;border-radius:16px;display:none;';
     document.getElementById('map').appendChild(ld);
     var loading = 0;
     Object.keys(map._layers).forEach(function(k){

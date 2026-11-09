@@ -1,22 +1,23 @@
 /* ══════════════════════════════════════════════════════════════════
-   Kolkata Civic Data — Red / Black Glassmorphism theme
-   Depth + subtle spatial parallax (background driven by index.html)
+   Kolkata Civic Data — Black / White theme
+   Plain white background, black text and accents
    ══════════════════════════════════════════════════════════════════ */
 
 :root {
-  --red:        #e54b4a;
-  --red-soft:   #ff6a64;
-  --red-deep:   #a32d2d;
-  --ink:        #0a0203;
-  --glass:      rgba(28, 8, 9, 0.42);
-  --glass-2:    rgba(40, 12, 13, 0.32);
-  --glass-line: rgba(255, 100, 100, 0.18);
-  --glass-line-strong: rgba(255, 110, 105, 0.34);
-  --text:       #f5e9e8;
-  --text-dim:   rgba(245, 220, 218, 0.66);
-  --text-faint: rgba(245, 210, 208, 0.42);
-  --blur:       blur(20px) saturate(135%);
-  --shadow:     0 22px 60px rgba(0, 0, 0, 0.55);
+  --red:        #111111;   /* accent: black */
+  --red-soft:   #444444;
+  --red-deep:   #000000;
+  --ink:        #ffffff;
+  --heading:    #0a0a0a;
+  --glass:      #ffffff;
+  --glass-2:    #fafafa;
+  --glass-line: #e6e6e6;
+  --glass-line-strong: #c9c9c9;
+  --text:       #111111;
+  --text-dim:   #555555;
+  --text-faint: #8a8a8a;
+  --blur:       none;
+  --shadow:     0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
 /* ── Reset & base ─────────────────────────────────────────────── */
@@ -27,7 +28,7 @@ body {
   font-size: 15px;
   line-height: 1.6;
   color: var(--text);
-  background: #060102;
+  background: #ffffff;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -35,13 +36,13 @@ button { cursor: pointer; font-family: inherit; font-size: inherit; }
 select { font-family: inherit; font-size: inherit; }
 a { color: inherit; }
 
-::selection { background: rgba(229, 75, 74, 0.4); color: #fff; }
+::selection { background: rgba(0, 0, 0, 0.12); color: inherit; }
 
 /* ── Layout ───────────────────────────────────────────────────── */
 .app { min-height: 100vh; background: transparent; position: relative; z-index: 1; }
 
 .nav {
-  background: rgba(12, 3, 4, 0.55);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
   border-bottom: 1px solid var(--glass-line);
@@ -57,7 +58,7 @@ a { color: inherit; }
 .nav-brand {
   font-size: 14px;
   font-weight: 700;
-  color: #fff;
+  color: var(--heading);
   margin-right: 16px;
   padding: 16px 0;
   letter-spacing: 0.2px;
@@ -74,7 +75,7 @@ a { color: inherit; }
   transition: color 0.15s, border-color 0.15s;
 }
 .nav-btn:hover { color: var(--text); }
-.nav-btn.active { color: #fff; border-bottom-color: var(--red); }
+.nav-btn.active { color: var(--heading); border-bottom-color: var(--heading); }
 
 .main {
   max-width: 960px;
@@ -90,7 +91,7 @@ a { color: inherit; }
   border: 1px solid var(--glass-line);
   border-radius: 16px;
   padding: 20px 24px;
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.05);
+  box-shadow: var(--shadow);
 }
 
 .card-muted {
@@ -117,17 +118,17 @@ a { color: inherit; }
   border: 1px solid var(--glass-line);
   border-radius: 14px;
   padding: 16px 18px;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+  box-shadow: var(--shadow);
   transition: transform 0.18s, border-color 0.18s;
 }
 .stat-card:hover { transform: translateY(-3px); border-color: var(--glass-line-strong); }
 
 .stat-label { font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
-.stat-value { font-size: 26px; font-weight: 700; line-height: 1; color: #fff; }
+.stat-value { font-size: 26px; font-weight: 700; line-height: 1; color: var(--heading); }
 .stat-sub   { font-size: 12px; color: var(--text-faint); margin-top: 4px; }
 
 /* ── Typography helpers ───────────────────────────────────────── */
-.page-title   { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 4px; letter-spacing: 0.2px; }
+.page-title   { font-size: 26px; font-weight: 700; color: var(--heading); margin-bottom: 4px; letter-spacing: 0.2px; }
 .page-sub     { font-size: 14px; color: var(--text-dim); margin-bottom: 28px; }
 .section-head { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
 
@@ -135,7 +136,7 @@ a { color: inherit; }
 .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
 
 .pill {
-  background: rgba(255, 255, 255, 0.04);
+  background: #ffffff;
   border: 1px solid var(--glass-line);
   border-radius: 999px;
   padding: 5px 14px;
@@ -144,18 +145,18 @@ a { color: inherit; }
   color: var(--text-dim);
   transition: all 0.14s;
 }
-.pill:hover { border-color: var(--glass-line-strong); color: #fff; }
+.pill:hover { border-color: var(--glass-line-strong); color: var(--heading); }
 .pill.active {
-  background: linear-gradient(135deg, var(--red), var(--red-deep));
+  background: var(--red);
   border-color: var(--red);
-  color: #fff;
-  box-shadow: 0 6px 20px rgba(229, 75, 74, 0.4);
+  color: #ffffff;
+  box-shadow: none;
 }
 
 /* ── Year tabs ────────────────────────────────────────────────── */
 .year-tabs {
   display: flex;
-  background: rgba(0, 0, 0, 0.35);
+  background: #f2f2f2;
   border: 1px solid var(--glass-line);
   border-radius: 10px;
   padding: 3px;
@@ -172,9 +173,9 @@ a { color: inherit; }
   transition: all 0.14s;
 }
 .year-tab.active {
-  background: linear-gradient(135deg, var(--red), var(--red-deep));
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(229, 75, 74, 0.35);
+  background: var(--red);
+  color: #ffffff;
+  box-shadow: none;
 }
 
 /* ── AQI chips (kept vivid for data legibility) ───────────────── */
@@ -185,12 +186,12 @@ a { color: inherit; }
   padding: 2px 8px;
   border-radius: 999px;
 }
-.aqi-good        { background: rgba(34, 197, 94, 0.18);  color: #4ade80; border: 1px solid rgba(34,197,94,0.35); }
-.aqi-moderate    { background: rgba(234, 179, 8, 0.18);  color: #facc15; border: 1px solid rgba(234,179,8,0.35); }
-.aqi-ufs         { background: rgba(249, 115, 22, 0.18); color: #fb923c; border: 1px solid rgba(249,115,22,0.35); }
-.aqi-unhealthy   { background: rgba(239, 68, 68, 0.20);  color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
-.aqi-very        { background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(168,85,247,0.35); }
-.aqi-hazardous   { background: rgba(220, 38, 38, 0.28);  color: #fca5a5; border: 1px solid rgba(220,38,38,0.5); }
+.aqi-good        { background: rgba(34, 197, 94, 0.18);  color: #15803d; border: 1px solid rgba(34,197,94,0.35); }
+.aqi-moderate    { background: rgba(234, 179, 8, 0.18);  color: #a16207; border: 1px solid rgba(234,179,8,0.35); }
+.aqi-ufs         { background: rgba(249, 115, 22, 0.18); color: #c2410c; border: 1px solid rgba(249,115,22,0.35); }
+.aqi-unhealthy   { background: rgba(239, 68, 68, 0.20);  color: #b91c1c; border: 1px solid rgba(239,68,68,0.4); }
+.aqi-very        { background: rgba(168, 85, 247, 0.18); color: #7e22ce; border: 1px solid rgba(168,85,247,0.35); }
+.aqi-hazardous   { background: rgba(220, 38, 38, 0.28);  color: #7f1d1d; border: 1px solid rgba(220,38,38,0.5); }
 
 /* ── Month grid ───────────────────────────────────────────────── */
 .month-grid {
@@ -223,7 +224,7 @@ a { color: inherit; }
 .progress-bar {
   width: 100%;
   height: 5px;
-  background: rgba(255, 255, 255, 0.08);
+  background: #ececec;
   border-radius: 999px;
   margin-bottom: 10px;
   overflow: hidden;
@@ -272,19 +273,19 @@ a { color: inherit; }
   margin-bottom: 12px;
   transition: box-shadow 0.18s, border-color 0.18s, transform 0.18s;
 }
-.q-card:hover { box-shadow: 0 16px 44px rgba(229,75,74,0.18); border-color: var(--glass-line-strong); transform: translateY(-2px); }
+.q-card:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-color: var(--glass-line-strong); transform: translateY(-2px); }
 
 .q-card-header { padding: 18px 20px; }
-.q-card-body   { padding: 0 20px 18px 20px; border-top: 1px solid var(--glass-line); background: rgba(0,0,0,0.25); }
+.q-card-body   { padding: 0 20px 18px 20px; border-top: 1px solid var(--glass-line); background: #fafafa; }
 
 .q-id    { font-size: 11px; color: var(--text-faint); font-weight: 500; }
-.q-subj  { font-size: 15px; font-weight: 600; color: #fff; margin: 4px 0 8px; line-height: 1.4; }
+.q-subj  { font-size: 15px; font-weight: 600; color: var(--heading); margin: 4px 0 8px; line-height: 1.4; }
 .q-meta  { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 10px; }
 .q-date  { font-size: 12px; color: var(--text-dim); }
 .q-member{ font-size: 12px; color: var(--text-dim); font-style: italic; }
 
 .q-toggle {
-  background: rgba(255, 255, 255, 0.04);
+  background: #ffffff;
   border: 1px solid var(--glass-line);
   border-radius: 7px;
   padding: 5px 12px;
@@ -296,7 +297,7 @@ a { color: inherit; }
   gap: 5px;
   transition: all 0.14s;
 }
-.q-toggle:hover { background: rgba(229, 75, 74, 0.14); border-color: var(--glass-line-strong); color: #fff; }
+.q-toggle:hover { background: #f2f2f2; border-color: var(--glass-line-strong); color: var(--heading); }
 
 .q-section-label {
   font-size: 11px;
@@ -316,16 +317,16 @@ a { color: inherit; }
   padding: 3px 10px;
   border-radius: 999px;
 }
-.badge-earth    { background: rgba(59,130,246,0.18);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.35); }
-.badge-fisheries{ background: rgba(34,197,94,0.18);   color: #86efac; border: 1px solid rgba(34,197,94,0.35); }
-.badge-other    { background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--glass-line); }
-.badge-unstarred{ background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--glass-line); }
+.badge-earth    { background: rgba(59,130,246,0.18);  color: #1d4ed8; border: 1px solid rgba(59,130,246,0.35); }
+.badge-fisheries{ background: rgba(34,197,94,0.18);   color: #15803d; border: 1px solid rgba(34,197,94,0.35); }
+.badge-other    { background: #f4f4f4; color: var(--text-dim); border: 1px solid var(--glass-line); }
+.badge-unstarred{ background: #f4f4f4; color: var(--text-dim); border: 1px solid var(--glass-line); }
 
 /* ── Parliament stats ─────────────────────────────────────────── */
 .ministry-bar { margin-bottom: 12px; }
 .ministry-bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; color: var(--text-dim); }
-.ministry-bar-track { height: 6px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
-.ministry-bar-fill  { height: 100%; background: linear-gradient(90deg, var(--red), var(--red-deep)); border-radius: 999px; }
+.ministry-bar-track { height: 6px; background: #ececec; border-radius: 999px; overflow: hidden; }
+.ministry-bar-fill  { height: 100%; background: var(--red); border-radius: 999px; }
 
 /* ── Chart area ───────────────────────────────────────────────── */
 .chart-wrap {
@@ -336,9 +337,9 @@ a { color: inherit; }
   border-radius: 16px;
   padding: 20px 20px 12px;
   margin-bottom: 20px;
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.05);
+  box-shadow: var(--shadow);
 }
-.chart-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 16px; }
+.chart-title { font-size: 14px; font-weight: 600; color: var(--heading); margin-bottom: 16px; }
 
 /* ── Toolbar ──────────────────────────────────────────────────── */
 .toolbar {
@@ -357,11 +358,11 @@ a { color: inherit; }
   padding: 6px 10px;
   font-size: 12px;
   color: var(--text);
-  background: rgba(20, 6, 7, 0.8);
+  background: #ffffff;
   outline: none;
 }
 .sort-select:focus { border-color: var(--red); }
-.sort-select option { background: #160506; color: var(--text); }
+.sort-select option { background: #ffffff; color: var(--text); }
 
 /* ── Coming soon ──────────────────────────────────────────────── */
 .coming-soon {
@@ -370,7 +371,7 @@ a { color: inherit; }
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background: rgba(229, 75, 74, 0.07);
+  background: #fafafa;
   border: 1.5px dashed var(--glass-line-strong);
   border-radius: 14px;
   text-align: center;
@@ -391,11 +392,11 @@ a { color: inherit; }
   margin-bottom: 24px;
 }
 
-/* ── Recharts dark adjustments ────────────────────────────────── */
-.recharts-cartesian-grid line { stroke: rgba(255, 255, 255, 0.07); }
+/* ── Recharts light adjustments ────────────────────────────────── */
+.recharts-cartesian-grid line { stroke: rgba(0, 0, 0, 0.08); }
 .recharts-text { fill: var(--text-faint); }
 .recharts-default-tooltip {
-  background: rgba(20, 6, 7, 0.92) !important;
+  background: rgba(255, 255, 255, 0.97) !important;
   border: 1px solid var(--glass-line-strong) !important;
   border-radius: 10px !important;
   color: var(--text) !important;

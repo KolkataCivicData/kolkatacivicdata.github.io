@@ -8,46 +8,47 @@
  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
 :root {
-  --ink:#f5e9e8; --accent:#e54b4a;
-  --glass:rgba(28,8,9,0.5); --glass-2:rgba(40,12,13,0.4);
-  --glass-line:rgba(255,100,100,0.2); --glass-line-strong:rgba(255,110,105,0.36);
-  --text-dim:rgba(245,220,218,0.66); --text-faint:rgba(245,210,208,0.42);
+  --ink:#111111; --accent:#111111;
+  --glass:rgba(255,255,255,0.96); --glass-2:#fafafa;
+  --glass-line:#e6e6e6; --glass-line-strong:#c9c9c9;
+  --text-dim:#555555; --text-faint:#8a8a8a;
   --blur:blur(20px) saturate(135%);
 }
 * { box-sizing: border-box; }
-html, body { background:#060102; }
+html, body { background:#ffffff; }
 body { margin:0; font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; color:var(--ink); }
 
 /* Fixed parallax depth field behind the page chrome */
 #bg-field { position:fixed; inset:-8%; z-index:0; overflow:hidden; pointer-events:none;
-  background:radial-gradient(circle at 28% 10%, #2a0608 0%, #120203 46%, #060102 100%); }
+  background:#ffffff; }
+#bg-field .orb { display:none !important; }
 #bg-field .orb { position:absolute; border-radius:50%; filter:blur(44px); will-change:transform; }
 #bg-field .orb-1 { top:-10%; left:-6%; width:46vw; height:46vw; background:radial-gradient(circle,rgba(229,75,74,0.4),transparent 66%); }
 #bg-field .orb-2 { bottom:-14%; right:-8%; width:42vw; height:42vw; background:radial-gradient(circle,rgba(163,45,45,0.38),transparent 66%); }
 body > *:not(#bg-field) { position:relative; z-index:1; }
 
 header { padding:18px 22px; border-bottom:1px solid var(--glass-line); background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); }
-header h1 { margin:0 0 4px; font-size:1.25rem; color:#fff; }
+header h1 { margin:0 0 4px; font-size:1.25rem; color:#0a0a0a; }
 header p { margin:0; color:var(--text-dim); font-size:.85rem; }
-#map { height: calc(100vh - 139px); width:100%; background:#0a0203; }
-.legend { background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); color:var(--ink); padding:10px 12px; border-radius:10px; border:1px solid var(--glass-line); box-shadow:0 10px 30px rgba(0,0,0,.5); font-size:.78rem; line-height:1.4; }
+#map { height: calc(100vh - 139px); width:100%; background:#f2f2f2; }
+.legend { background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); color:var(--ink); padding:10px 12px; border-radius:10px; border:1px solid var(--glass-line); box-shadow:0 6px 20px rgba(0,0,0,.10); font-size:.78rem; line-height:1.4; }
 .legend i { display:inline-block; width:16px; height:12px; margin-right:6px; vertical-align:middle; border-radius:2px; }
-.panel { background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); color:var(--ink); padding:8px 10px; border-radius:10px; border:1px solid var(--glass-line); box-shadow:0 10px 30px rgba(0,0,0,.5); font-size:.8rem; }
+.panel { background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); color:var(--ink); padding:8px 10px; border-radius:10px; border:1px solid var(--glass-line); box-shadow:0 6px 20px rgba(0,0,0,.10); font-size:.8rem; }
 .panel label { display:block; margin-bottom:4px; color:var(--text-dim); }
-.note { background:rgba(229,75,74,0.08); border:1px solid var(--glass-line-strong); color:var(--text-dim); padding:6px 9px; border-radius:6px; font-size:.72rem; margin-top:6px; }
+.note { background:#f5f5f5; border:1px solid var(--glass-line-strong); color:var(--text-dim); padding:6px 9px; border-radius:6px; font-size:.72rem; margin-top:6px; }
 /* Mobile sizing for map controls (from upstream) */
 @media (max-width:760px){ .legend{ font-size:.7rem; padding:6px 8px; max-height:34vh; overflow:auto; } .leaflet-control-layers{ font-size:.75rem; max-width:46vw; } .leaflet-right .leaflet-control{ clear:both; margin-right:6px !important; } .panel{ font-size:.72rem; max-width:46vw; } }
 /* Plain-language intro / heat-exposure explainer */
 #lst-explainer { padding:10px 22px; background:var(--glass-2); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border-bottom:1px solid var(--glass-line); }
-#lst-explainer h2 { margin:0 0 4px; font-size:1rem; font-weight:700; color:#ff8a85; }
+#lst-explainer h2 { margin:0 0 4px; font-size:1rem; font-weight:700; color:#0a0a0a; }
 #lst-explainer p { margin:0; font-size:.82rem; line-height:1.5; color:var(--text-dim); max-width:780px; }
-/* Dark Leaflet chrome */
-.leaflet-popup-content-wrapper, .leaflet-popup-tip { background:rgba(20,6,7,0.94); color:var(--ink); box-shadow:0 10px 30px rgba(0,0,0,.6); }
+/* Light Leaflet chrome */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background:#ffffff; color:var(--ink); box-shadow:0 6px 20px rgba(0,0,0,.15); }
 .leaflet-popup-content-wrapper { border:1px solid var(--glass-line-strong); border-radius:10px; }
-.leaflet-bar a, .leaflet-control-layers { background:rgba(20,6,7,0.9); color:var(--ink); border-color:var(--glass-line) !important; }
+.leaflet-bar a, .leaflet-control-layers { background:#ffffff; color:var(--ink); border-color:var(--glass-line) !important; }
 .leaflet-bar a { border-bottom:1px solid var(--glass-line); }
-.leaflet-bar a:hover { background:rgba(229,75,74,0.25); }
-.leaflet-control-attribution { background:rgba(10,2,3,0.7) !important; color:var(--text-faint) !important; }
+.leaflet-bar a:hover { background:#f2f2f2; }
+.leaflet-control-attribution { background:rgba(255,255,255,0.85) !important; color:var(--text-faint) !important; }
 .leaflet-control-attribution a { color:var(--text-dim) !important; }
 /* Keyboard focus visibility for accessibility */
 input:focus-visible, button:focus-visible, select:focus-visible, a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
@@ -55,18 +56,18 @@ input:focus-visible, button:focus-visible, select:focus-visible, a:focus-visible
 </head>
 <body>
 <div id="bg-field"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
-<nav style="display:flex;align-items:center;gap:4px;background:rgba(12,3,4,0.6);backdrop-filter:blur(20px) saturate(135%);-webkit-backdrop-filter:blur(20px) saturate(135%);padding:0 24px;border-bottom:1px solid rgba(255,100,100,0.2);font-family:-apple-system,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-<span style="color:#fff;font-weight:700;font-size:14px;padding:16px 14px 16px 0;margin-right:8px;letter-spacing:.2px;">Kolkata Civic Data</span>
-<a href="/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:rgba(245,220,218,0.66);border-bottom:2px solid transparent;">Air Pollution</a>
-<a href="/lst/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:#fff;border-bottom:2px solid #e54b4a;">LST</a>
-<a href="/monsoon/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:rgba(245,220,218,0.66);border-bottom:2px solid transparent;">Monsoon</a>
+<nav style="display:flex;align-items:center;gap:4px;background:rgba(255,255,255,0.95);padding:0 24px;border-bottom:1px solid #e6e6e6;font-family:-apple-system,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<span style="color:#0a0a0a;font-weight:700;font-size:14px;padding:16px 14px 16px 0;margin-right:8px;letter-spacing:.2px;">Kolkata Civic Data</span>
+<a href="/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:#555555;border-bottom:2px solid transparent;">Air Pollution</a>
+<a href="/lst/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:#0a0a0a;border-bottom:2px solid #0a0a0a;">LST</a>
+<a href="/monsoon/" style="font-size:14px;font-weight:500;padding:16px 14px;text-decoration:none;color:#555555;border-bottom:2px solid transparent;">Monsoon</a>
 </nav>
 <header>
 <h1>Kolkata Land Surface Temperature</h1>
     <p>Landsat 8/9 Collection 2 L2 &middot; 1 Apr &ndash; 1 Jun 2026 &middot; switchable OpenStreetMap / satellite basemaps</p></p></header>
 <div id="lst-explainer">
 <h2>Heat exposure across Kolkata</h2>
-<p>This map shows how hot different surfaces get across Kolkata during the pre-monsoon season (Apr–Jun). Areas shown in <strong style="color:#ff8a85;">dark red</strong> experience significantly higher surface temperatures and may pose increased health risks for outdoor workers, while blue areas (water and green cover) stay cooler. Hover anywhere on the map to read the surface temperature; open <em>Charts &amp; tools</em> for stats, trends and comparisons.</p>
+<p>This map shows how hot different surfaces get across Kolkata during the pre-monsoon season (Apr–Jun). Areas shown in <strong style="color:#c61700;">dark red</strong> experience significantly higher surface temperatures and may pose increased health risks for outdoor workers, while blue areas (water and green cover) stay cooler. Hover anywhere on the map to read the surface temperature; open <em>Charts &amp; tools</em> for stats, trends and comparisons.</p>
 </div>
 <div id="map"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
